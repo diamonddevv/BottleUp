@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bn63bkq883adu"]
+
+[ext_resource type="PackedScene" uid="uid://bmsja7y4omkjr" path="res://asset/prefab/player.tscn" id="1_cj3hu"]
+
+[node name="main" type="Node"]
+
+[node name="player" parent="." instance=ExtResource("1_cj3hu")]

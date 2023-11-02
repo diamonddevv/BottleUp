@@ -1,3 +1,15 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1698943201
+::res://::1698947478
 icon.svg::CompressedTexture2D::5097962693988594374::1698943196::1698943202::1::::<><>::
+README.md::TextFile::-1::1698944010::0::1::::<><>::
+::res://asset/::1698944872
+::res://asset/audio/::1698944867
+::res://asset/prefab/::1698947437
+player.tscn::PackedScene::3266393779016793931::1698947437::0::1::::<><>::uid://bwwcf2abb5gig::::res://asset/texture/sprites.png
+::res://asset/shader/::1698944872
+::res://asset/texture/::1698945183
+sprites.png::CompressedTexture2D::3976123335452597966::1698945179::1698945183::1::::<><>::
+::res://scene/::1698947377
+main.tscn::PackedScene::3364573774449681802::1698947377::0::1::::<><>::uid://bmsja7y4omkjr::::res://asset/prefab/player.tscn
+::res://script/::1698947478
+::res://script/Player/::1698947524
