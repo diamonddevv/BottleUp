@@ -15,6 +15,8 @@ namespace BottleUp.asset.script.Util
         public static Vector2 RadToVec(float radians) => new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
         public static Vector2 DegToVec(float degrees) => RadToVec(degrees * DEGTORAD);
 
+        public static float Lerp(float a, float b, float by) => a + (b - a) * by;
+
         public static Vector2 Uniform(float f) => new Vector2(f, f);
     }
 }

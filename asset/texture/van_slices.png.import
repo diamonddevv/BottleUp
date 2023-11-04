@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bwwcf2abb5gig"
-path="res://.godot/imported/sprites.png-fc62801a2960ff6de1d37fdb21d5961e.ctex"
+uid="uid://bf5hacoaaps43"
+path="res://.godot/imported/van_slices.png-e864f10dad8e54a74f6d8ae6e96af53d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset/texture/sprites.png"
-dest_files=["res://.godot/imported/sprites.png-fc62801a2960ff6de1d37fdb21d5961e.ctex"]
+source_file="res://asset/texture/van_slices.png"
+dest_files=["res://.godot/imported/van_slices.png-e864f10dad8e54a74f6d8ae6e96af53d.ctex"]
 
 [params]
 
