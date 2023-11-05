@@ -8,14 +8,16 @@
 size = Vector2(10, 21)
 
 [node name="player" type="CharacterBody2D"]
+collision_mask = 3
 script = ExtResource("1_108yg")
 
 [node name="sprite" type="Sprite2D" parent="."]
+position = Vector2(0, 9)
 texture = ExtResource("2_eitmi")
 hframes = 8
 region_enabled = true
 script = ExtResource("2_rqkw5")
 
 [node name="shape" type="CollisionShape2D" parent="."]
-position = Vector2(0, -3.5)
+position = Vector2(0, 6)
 shape = SubResource("RectangleShape2D_7vtbi")

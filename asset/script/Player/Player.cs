@@ -18,6 +18,7 @@ public partial class Player : CharacterBody2D
 	[Export] public float BaseAcceleration { get; set; } = .5f;
 	[Export] public float MaxSpeed { get; set; } = 15;
 	[Export] public float Friction { get; set; } = 1.005f;
+	[Export] public float CameraSlide { get; set; } = 18f;
 
 	[ExportCategory("Other Nodes")]
 	[Export] public NodePath Camera;
@@ -27,6 +28,7 @@ public partial class Player : CharacterBody2D
 
 	// children
 	private StackedSprite _sprite;
+	private CollisionShape2D _shape;
 
 	private float _turnMultiplier;
     private float _speed;
@@ -36,15 +38,18 @@ public partial class Player : CharacterBody2D
 	private float _turnInputTick;
 	private bool _lastHandbrakeInputTick;
 	private bool _handbrakeInputTick;
-	private float _timeSinceLastTwistChange;
 	private float _twist;
-	private float _lastTwist;
+	private Vector2 _cameraSlide;
+	private Vector2 _maxCameraSlideVec;
 
 	public override void _Ready()
 	{
 		_camera = GetNode<Camera2D>(Camera);
 
 		_sprite = GetNode<StackedSprite>("sprite");
+		_shape = GetNode<CollisionShape2D>("shape");
+
+		_maxCameraSlideVec = BottleUpMath.Uniform(CameraSlide);
 	}
 
 	
@@ -53,8 +58,8 @@ public partial class Player : CharacterBody2D
 		ControlTick();
 		ApplyMovement(delta);
 
-		_camera.Rotation = Rotation;
-		_camera.Position = Position;
+		_cameraSlide = Position + (BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * BottleUpMath.Lerp(0, CameraSlide, _speed / MaxSpeed));
+		_camera.Position = _cameraSlide;
 	}
 
     #region Movement Controller
@@ -103,17 +108,9 @@ public partial class Player : CharacterBody2D
         var twistAdd = (_turnInputTick * -20) + (_handbrakeInputTick ? _turnInputTick * -15 : 0);
         RotationDegrees += rotForce * (_speed / MaxSpeed) * _turnMultiplier;
 
-		if (!(_turnInputTick == _lastTurnInputTick && _handbrakeInputTick == _lastHandbrakeInputTick))
-		{
-			_lastTwist = _twist;
-			_timeSinceLastTwistChange = 0;
-		} else
-		{
-			_timeSinceLastTwistChange += (float)delta;
-		}
+        _sprite.SetRotation(RotationDegrees + twistAdd);
 
-		_twist = BottleUpMath.Lerp(_lastTwist, RotationDegrees + twistAdd, Mathf.Clamp(_timeSinceLastTwistChange * 5, 0, 1).Test());
-        _sprite.SetRotation(_twist);
+		//todo : slow on grass collision
 
 		Velocity += BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * _accelInputTick * (_speed / braker) * -1; // Apply Speed
 		if (_speed != 0) Velocity /= Friction + .75f/_speed; // Apply Friction; allows player to stop moving when not inputting controls
