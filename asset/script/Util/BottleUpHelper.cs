@@ -14,5 +14,8 @@ namespace BottleUp.asset.script.Util
             GD.Print(t);
             return t;
         }
+
+
+        public static bool IsBitSet(this byte b, int index) => (b & (1 << index)) != 0;
     }
 }

@@ -4,4 +4,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>BottleUp</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="asset\script\Map\" />
+  </ItemGroup>
 </Project>

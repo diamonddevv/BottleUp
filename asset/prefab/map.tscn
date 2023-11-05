@@ -369,7 +369,7 @@ texture_region_size = Vector2i(32, 32)
 
 [sub_resource type="TileSet" id="TileSet_ur8rg"]
 tile_size = Vector2i(32, 32)
-physics_layer_0/collision_layer = 0
+physics_layer_0/collision_layer = 2
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Road"
 terrain_set_0/terrain_0/color = Color(0.247059, 0.321569, 0.788235, 1)

@@ -18,6 +18,7 @@ public partial class Player : CharacterBody2D
 	[Export] public float BaseAcceleration { get; set; } = .5f;
 	[Export] public float MaxSpeed { get; set; } = 15;
 	[Export] public float Friction { get; set; } = 1.005f;
+	[Export] public float GrassFriction { get; set; } = 1.15f;
 	[Export] public float CameraSlide { get; set; } = 18f;
 
 	[ExportCategory("Other Nodes")]
@@ -55,16 +56,21 @@ public partial class Player : CharacterBody2D
 	
 	public override void _Process(double delta)
 	{
-		ControlTick();
-		ApplyMovement(delta);
-
-		_cameraSlide = Position + (BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * BottleUpMath.Lerp(0, CameraSlide, _speed / MaxSpeed));
-		_camera.Position = _cameraSlide;
+		
 	}
+
+    public override void _PhysicsProcess(double delta)
+    {
+        ControlTick();
+        ApplyMovement(delta);
+
+        _cameraSlide = Position + (BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * BottleUpMath.Lerp(0, CameraSlide, _speed / MaxSpeed));
+        _camera.Position = _cameraSlide;
+    }
 
     #region Movement Controller
 
-	public void ControlTick()
+    public void ControlTick()
 	{
 		_lastAccelInputTick = _accelInputTick;
 		_lastTurnInputTick = _turnInputTick;
@@ -110,13 +116,40 @@ public partial class Player : CharacterBody2D
 
         _sprite.SetRotation(RotationDegrees + twistAdd);
 
-		//todo : slow on grass collision
+		
 
 		Velocity += BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * _accelInputTick * (_speed / braker) * -1; // Apply Speed
 		if (_speed != 0) Velocity /= Friction + .75f/_speed; // Apply Friction; allows player to stop moving when not inputting controls
 
-		MoveAndSlide(); // do collisions if required
-	}
+		// do collisions if required
+		var collision = MoveAndCollide(Velocity * (float)delta, testOnly: true);
+        bool doCollide = true;
+        if (collision != null)
+		{
+			
+			if (collision.GetCollider() is TileMap tm)
+			{
+				if (((byte)tm.TileSet.GetPhysicsLayerCollisionMask(0)).IsBitSet(0))
+				{
+					// ON GRASS
+
+					if (_speed != 0) Velocity /= GrassFriction + .25f/_speed;
+
+					//
+                    doCollide = false;
+				}
+			}
+        }
+
+        if (doCollide)
+        {
+            collision = MoveAndCollide(Velocity * (float)delta);
+            if (collision != null) Velocity = Velocity.Slide(collision.GetNormal());
+        } else
+		{
+			Position += Velocity * (float)delta;
+		}
+    }
 
     #endregion
 }

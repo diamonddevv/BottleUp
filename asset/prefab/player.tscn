@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://asset/script/Player/Player.cs" id="1_108yg"]
 [ext_resource type="Texture2D" uid="uid://bf5hacoaaps43" path="res://asset/texture/van_slices.png" id="2_eitmi"]
-[ext_resource type="Script" path="res://asset/script/Player/StackedSprite.cs" id="2_rqkw5"]
+[ext_resource type="Script" path="res://asset/script/Tool/StackedSprite.cs" id="3_8upxq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7vtbi"]
 size = Vector2(10, 21)
@@ -16,7 +16,7 @@ position = Vector2(0, 9)
 texture = ExtResource("2_eitmi")
 hframes = 8
 region_enabled = true
-script = ExtResource("2_rqkw5")
+script = ExtResource("3_8upxq")
 
 [node name="shape" type="CollisionShape2D" parent="."]
 position = Vector2(0, 6)
