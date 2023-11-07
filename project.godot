@@ -24,6 +24,7 @@ project/assembly_name="BottleUp!"
 
 2d_physics/layer_1="Player"
 2d_physics/layer_2="Map"
+2d_physics/layer_3="POIs"
 
 [rendering]
 

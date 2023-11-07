@@ -1,6 +1,7 @@
 using BottleUp.asset.script.Util;
 using Godot;
 using System;
+using System.Linq;
 
 public partial class Player : CharacterBody2D
 {
@@ -122,34 +123,78 @@ public partial class Player : CharacterBody2D
 		if (_speed != 0) Velocity /= Friction + .75f/_speed; // Apply Friction; allows player to stop moving when not inputting controls
 
 		// do collisions if required
-		var collision = MoveAndCollide(Velocity * (float)delta, testOnly: true);
+		DoCollisions(delta);
+    }
+
+	public void DoCollisions(double delta)
+	{
+		var oldVel = Velocity;
+
+        var collided = MoveAndSlide();
+		if (collided != null)
+		{
+            bool? overrideCollision = null;
+            for (int i = 0; i < GetSlideCollisionCount(); i++)
+			{
+				var collision = GetSlideCollision(i);
+
+                if (collision.GetCollider() is Map m)
+                {
+                    if (((byte)m.TileSet.GetPhysicsLayerCollisionMask(0)).IsBitSet(0))
+                    {
+                        // ON GRASS
+
+                        if (_speed != 0) Velocity /= GrassFriction + .25f / _speed;
+
+                        //
+                        overrideCollision = true;
+                    }
+                }
+
+                if (collision.GetCollider() is Poi poi)
+                {
+                    overrideCollision = false;
+                }
+
+				if (overrideCollision == false)
+				{
+					break;
+				}
+            }
+
+            
+            if (overrideCollision != null && overrideCollision.Value)
+            {
+                Position += oldVel * (float)delta;
+            }
+        }
+
+		
+
+
+		/*
         bool doCollide = true;
         if (collision != null)
-		{
-			
-			if (collision.GetCollider() is TileMap tm)
-			{
-				if (((byte)tm.TileSet.GetPhysicsLayerCollisionMask(0)).IsBitSet(0))
-				{
-					// ON GRASS
+        {
+            // GetSlideCollisionCount(); GetSlideCollision(index); !!!!
 
-					if (_speed != 0) Velocity /= GrassFriction + .25f/_speed;
+            // if something else is present, dont add grass in same location.
 
-					//
-                    doCollide = false;
-				}
-			}
+            
         }
 
         if (doCollide)
         {
             collision = MoveAndCollide(Velocity * (float)delta);
-            if (collision != null) Velocity = Velocity.Slide(collision.GetNormal());
-        } else
-		{
-			Position += Velocity * (float)delta;
-		}
+			if (collision != null) Velocity = Velocity.Slide(collision.GetNormal());
+        }
+        else
+        {
+            
+        }
+		*/
     }
 
-    #endregion
+	#endregion
+
 }

@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://dyvoluah2k06x"]
+
+[ext_resource type="Script" path="res://asset/script/Map/Poi.cs" id="1_ql78g"]
+[ext_resource type="Texture2D" uid="uid://dbw47fcwtlvd7" path="res://asset/texture/tilemap.png" id="2_8p77c"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x1qsr"]
+atlas = ExtResource("2_8p77c")
+region = Rect2(240, 0, 16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6vdcn"]
+size = Vector2(16, 16)
+
+[node name="poi" type="StaticBody2D"]
+collision_layer = 4
+script = ExtResource("1_ql78g")
+
+[node name="sprite" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_x1qsr")
+
+[node name="shape" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_6vdcn")
