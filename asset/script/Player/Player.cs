@@ -6,21 +6,27 @@ using System.Linq;
 public partial class Player : CharacterBody2D
 {
 
-    [ExportCategory("Controls")]
-    [Export] public Key Accelerate { get; set; } = Key.W;
-    [Export] public Key Brake { get; set; } = Key.S;
-    [Export] public Key LeftTurn { get; set; } = Key.A;
-    [Export] public Key RightTurn { get; set; } = Key.D;
-    [Export] public Key Handbrake { get; set; } = Key.Space;
+	[ExportCategory("Controls")]
+	[Export] public Key Accelerate { get; set; } = Key.W;
+	[Export] public Key Brake { get; set; } = Key.S;
+	[Export] public Key LeftTurn { get; set; } = Key.A;
+	[Export] public Key RightTurn { get; set; } = Key.D;
+	[Export] public Key Handbrake { get; set; } = Key.Space;
+	[Export] public Key Boost { get; set; } = Key.Shift;
+	[Export] public Key Interact { get; set; } = Key.E;
 
 	[ExportCategory("Movement/Physics")]
 	[Export] public float ForwardDegreeOffset { get; set; } = 90;
 	[Export] public float TurnSpeed { get; set; } = 2.5f;
 	[Export] public float BaseAcceleration { get; set; } = .5f;
 	[Export] public float MaxSpeed { get; set; } = 15;
+	[Export] public float BoostSpeedMultiplier { get; set; } = 1.5f;
+	[Export] public float BoostMaxTimeSeconds { get; set; } = 2f;
+	[Export] public float BoostRegainTimeSeconds { get; set; } = 5f;
 	[Export] public float Friction { get; set; } = 1.005f;
 	[Export] public float GrassFriction { get; set; } = 1.15f;
 	[Export] public float CameraSlide { get; set; } = 18f;
+	[Export] public float SquareInteractDistanceThreshold { get; set; } = 1e4f;
 
 	[ExportCategory("Other Nodes")]
 	[Export] public NodePath Camera;
@@ -30,28 +36,60 @@ public partial class Player : CharacterBody2D
 
 	// children
 	private StackedSprite _sprite;
-	private CollisionShape2D _shape;
+	private Area2D _grassCollider;
+	private PlayerInventoryHandler _inventory;
 
 	private float _turnMultiplier;
-    private float _speed;
+	private float _speed;
 	private float _accelInputTick;
 	private float _lastAccelInputTick;
 	private float _lastTurnInputTick;
 	private float _turnInputTick;
 	private bool _lastHandbrakeInputTick;
 	private bool _handbrakeInputTick;
+	private bool _boostInputTick;
+	private bool _lastInteractInputTick;
+	private bool _interactInputTick;
 	private float _twist;
 	private Vector2 _cameraSlide;
 	private Vector2 _maxCameraSlideVec;
+	private bool _onGrass;
+	private float _boostTime;
 
 	public override void _Ready()
 	{
 		_camera = GetNode<Camera2D>(Camera);
 
 		_sprite = GetNode<StackedSprite>("sprite");
-		_shape = GetNode<CollisionShape2D>("shape");
+		_grassCollider = GetNode<Area2D>("grassCollider");
+		_inventory = GetNode<PlayerInventoryHandler>("inventoryHandler");
 
 		_maxCameraSlideVec = BottleUpMath.Uniform(CameraSlide);
+
+
+		// Add GrassCollider Properties
+		_grassCollider.BodyEntered += (body) =>
+		{
+            if (body is Map map)
+			{
+				if (((byte)map.TileSet.GetPhysicsLayerCollisionMask(0)).IsBitSet(0))
+				{
+					_onGrass = true;
+				}
+			}
+		};
+
+		_grassCollider.BodyExited += (body) =>
+		{
+
+			if (body is Map map)
+			{
+				if (((byte)map.TileSet.GetPhysicsLayerCollisionMask(0)).IsBitSet(0))
+				{
+					_onGrass = false;
+				}
+			}
+		};
 	}
 
 	
@@ -60,62 +98,79 @@ public partial class Player : CharacterBody2D
 		
 	}
 
-    public override void _PhysicsProcess(double delta)
-    {
-        ControlTick();
-        ApplyMovement(delta);
+	public override void _PhysicsProcess(double delta)
+	{
+		ControlTick();
+		ApplyMovement(delta);
 
-        _cameraSlide = Position + (BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * BottleUpMath.Lerp(0, CameraSlide, _speed / MaxSpeed));
-        _camera.Position = _cameraSlide;
+		_cameraSlide = Position + (BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * BottleUpMath.Lerp(0, CameraSlide, _speed / MaxSpeed));
+		_camera.Position = _cameraSlide;
+	}
+
+    public void ControlTick()
+    {
+        _lastAccelInputTick = _accelInputTick;
+        _lastTurnInputTick = _turnInputTick;
+        _lastHandbrakeInputTick = _handbrakeInputTick;
+		_lastInteractInputTick = _interactInputTick;
+
+        _accelInputTick = 0;
+        _turnInputTick = 0;
+        _handbrakeInputTick = false;
+        _boostInputTick = false;
+        _interactInputTick = false;
+
+        if (Input.IsKeyPressed(Accelerate)) _accelInputTick += 1;
+        if (Input.IsKeyPressed(Brake)) _accelInputTick -= 1;
+
+        if (Input.IsKeyPressed(LeftTurn)) _turnInputTick += 1;
+        if (Input.IsKeyPressed(RightTurn)) _turnInputTick -= 1;
+
+        if (Input.IsKeyPressed(Handbrake)) _handbrakeInputTick = true;
+        if (Input.IsKeyPressed(Boost)) _boostInputTick = true;
+
+        if (Input.IsKeyPressed(Interact)) _interactInputTick = true;
     }
 
     #region Movement Controller
 
-    public void ControlTick()
+    public void ApplyMovement(double delta)
 	{
-		_lastAccelInputTick = _accelInputTick;
-		_lastTurnInputTick = _turnInputTick;
-		_lastHandbrakeInputTick = _handbrakeInputTick;
+		var frameMaxSpeed = MaxSpeed;
+		if (_boostInputTick && _boostTime > 0)
+		{
+            frameMaxSpeed = MaxSpeed * BoostSpeedMultiplier;
+			_boostTime -= (float)delta;
+        } else
+		{
+			if (!_boostInputTick && _boostTime < BoostMaxTimeSeconds) _boostTime += (float)delta / (BoostRegainTimeSeconds / BoostMaxTimeSeconds);
+        }
 
-        _accelInputTick = 0;
-        _turnInputTick = 0;
-		_handbrakeInputTick = false;
-
-		if (Input.IsKeyPressed(Accelerate)) _accelInputTick += 1;
-		if (Input.IsKeyPressed(Brake)) _accelInputTick -= 1;
-
-		if (Input.IsKeyPressed(LeftTurn)) _turnInputTick += 1;
-		if (Input.IsKeyPressed(RightTurn)) _turnInputTick -= 1;
-
-		if (Input.IsKeyPressed(Handbrake)) _handbrakeInputTick = true;
-	}
-	
-	public void ApplyMovement(double delta)
-	{
 		_turnMultiplier = 1;
 
 		if (_accelInputTick != 0 && _accelInputTick == _lastAccelInputTick)
 		{
-			if (_speed < MaxSpeed && !_handbrakeInputTick) _speed += BaseAcceleration;
+			if (_speed < frameMaxSpeed && !_handbrakeInputTick) _speed += BaseAcceleration;
+			if (_speed > frameMaxSpeed) _speed -= BaseAcceleration;
 		} else
 		{
-            if (_speed > 0) _speed -= BaseAcceleration;
+			if (_speed > 0) _speed -= BaseAcceleration;
 			if (_speed < 0) _speed = 0;
 		}
 
-        if (_handbrakeInputTick)
-        {
-            _speed -= _speed / 100 * 1.5f;
-            _turnMultiplier *= 1.45f;
-        }
+		if (_handbrakeInputTick)
+		{
+			_speed -= _speed / 100 * 1.5f;
+			_turnMultiplier *= 1.45f;
+		}
 
-        var braker = _accelInputTick < 0 ? 5 : 1;
+		var braker = _accelInputTick < 0 ? 5 : 1;
 		var rotForce = _turnInputTick * TurnSpeed * -1;
 
-        var twistAdd = (_turnInputTick * -20) + (_handbrakeInputTick ? _turnInputTick * -15 : 0);
-        RotationDegrees += rotForce * (_speed / MaxSpeed) * _turnMultiplier;
+		var twistAdd = (_turnInputTick * -20) + (_handbrakeInputTick ? _turnInputTick * -15 : 0);
+		RotationDegrees += rotForce * (_speed / frameMaxSpeed) * _turnMultiplier;
 
-        _sprite.SetRotation(RotationDegrees + twistAdd);
+		_sprite.SetRotation(RotationDegrees + twistAdd);
 
 		
 
@@ -124,77 +179,20 @@ public partial class Player : CharacterBody2D
 
 		// do collisions if required
 		DoCollisions(delta);
-    }
+	}
 
 	public void DoCollisions(double delta)
 	{
-		var oldVel = Velocity;
+        if (_onGrass && _speed != 0) Velocity /= GrassFriction + .25f / _speed;
 
-        var collided = MoveAndSlide();
-		if (collided != null)
-		{
-            bool? overrideCollision = null;
-            for (int i = 0; i < GetSlideCollisionCount(); i++)
-			{
-				var collision = GetSlideCollision(i);
-
-                if (collision.GetCollider() is Map m)
-                {
-                    if (((byte)m.TileSet.GetPhysicsLayerCollisionMask(0)).IsBitSet(0))
-                    {
-                        // ON GRASS
-
-                        if (_speed != 0) Velocity /= GrassFriction + .25f / _speed;
-
-                        //
-                        overrideCollision = true;
-                    }
-                }
-
-                if (collision.GetCollider() is Poi poi)
-                {
-                    overrideCollision = false;
-                }
-
-				if (overrideCollision == false)
-				{
-					break;
-				}
-            }
-
-            
-            if (overrideCollision != null && overrideCollision.Value)
-            {
-                Position += oldVel * (float)delta;
-            }
-        }
-
-		
-
-
-		/*
-        bool doCollide = true;
-        if (collision != null)
-        {
-            // GetSlideCollisionCount(); GetSlideCollision(index); !!!!
-
-            // if something else is present, dont add grass in same location.
-
-            
-        }
-
-        if (doCollide)
-        {
-            collision = MoveAndCollide(Velocity * (float)delta);
-			if (collision != null) Velocity = Velocity.Slide(collision.GetNormal());
-        }
-        else
-        {
-            
-        }
-		*/
-    }
+		MoveAndSlide();
+	}
 
 	#endregion
+
+	#region Getters
+	public bool GetIsInteracting() => _interactInputTick && !_lastInteractInputTick;
+	public PlayerInventoryHandler GetInventory() => _inventory;
+    #endregion
 
 }

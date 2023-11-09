@@ -1,15 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://bmsja7y4omkjr"]
+[gd_scene load_steps=6 format=3 uid="uid://bmsja7y4omkjr"]
 
 [ext_resource type="Script" path="res://asset/script/Player/Player.cs" id="1_108yg"]
 [ext_resource type="Texture2D" uid="uid://bf5hacoaaps43" path="res://asset/texture/van_slices.png" id="2_eitmi"]
 [ext_resource type="Script" path="res://asset/script/Tool/StackedSprite.cs" id="3_8upxq"]
+[ext_resource type="Script" path="res://asset/script/Player/PlayerInventoryHandler.cs" id="4_tdwjh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7vtbi"]
 size = Vector2(10, 21)
 
 [node name="player" type="CharacterBody2D"]
 position = Vector2(1, 0)
-collision_mask = 7
+collision_mask = 5
 script = ExtResource("1_108yg")
 
 [node name="sprite" type="Sprite2D" parent="."]
@@ -22,3 +23,14 @@ script = ExtResource("3_8upxq")
 [node name="shape" type="CollisionShape2D" parent="."]
 position = Vector2(0, 6)
 shape = SubResource("RectangleShape2D_7vtbi")
+debug_color = Color(0, 0.6, 0.701961, 0.419608)
+
+[node name="grassCollider" type="Area2D" parent="."]
+collision_mask = 2
+
+[node name="shape" type="CollisionShape2D" parent="grassCollider"]
+position = Vector2(0, 6)
+shape = SubResource("RectangleShape2D_7vtbi")
+
+[node name="inventoryHandler" type="Node" parent="."]
+script = ExtResource("4_tdwjh")
