@@ -6,13 +6,11 @@
 [node name="main" type="Node"]
 
 [node name="Map" parent="." instance=ExtResource("1_rsrif")]
-position = Vector2(60, -41)
-scale = Vector2(5, 5)
 Player = NodePath("../player")
 
 [node name="playerCamera" type="Camera2D" parent="."]
 zoom = Vector2(4, 4)
 
 [node name="player" parent="." instance=ExtResource("1_cj3hu")]
-position = Vector2(47, 195)
+position = Vector2(47, 228)
 Camera = NodePath("../playerCamera")

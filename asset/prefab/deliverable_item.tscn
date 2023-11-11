@@ -1,0 +1,34 @@
+[gd_scene load_steps=8 format=3 uid="uid://bo6iix6btgced"]
+
+[ext_resource type="Texture2D" uid="uid://dfsjn8rccr1iq" path="res://asset/texture/items.png" id="1_geiuk"]
+[ext_resource type="Script" path="res://asset/script/Tool/DeliverableItem.cs" id="1_xkc1k"]
+[ext_resource type="Shader" path="res://asset/shader/Tint.gdshader" id="3_4nnsr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xsl4y"]
+atlas = ExtResource("1_geiuk")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xflqk"]
+shader = ExtResource("3_4nnsr")
+shader_parameter/color = null
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_611yd"]
+atlas = ExtResource("1_geiuk")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qlwq2"]
+atlas = ExtResource("1_geiuk")
+region = Rect2(16, 0, 16, 16)
+
+[node name="DeliverableItem" type="Node2D"]
+script = ExtResource("1_xkc1k")
+
+[node name="bottle" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_xsl4y")
+
+[node name="milk" type="Sprite2D" parent="bottle"]
+material = SubResource("ShaderMaterial_xflqk")
+texture = SubResource("AtlasTexture_611yd")
+
+[node name="item" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_qlwq2")

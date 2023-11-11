@@ -1,3 +1,4 @@
+using BottleUp.asset.script.Game;
 using BottleUp.asset.script.Util;
 using Godot;
 using System;
@@ -29,11 +30,11 @@ public partial class Poi : StaticBody2D
 		else
 		{
 			// Update Player Distance
-			_sqrDistToPlayer = (Position*_map.Scale).DistanceSquaredTo(_player.Position);
+			_sqrDistToPlayer = (Position * _map.Scale).DistanceSquaredTo(_player.Position);
 		}
 
-		if (PointOfInterestType == PoiType.Depot) (this as DepotPoi).DoPoiProcess(delta);
-		if (PointOfInterestType == PoiType.Destination) (this as DeliveryDestinationPoi).DoPoiProcess(delta);
+		if (PointOfInterestType == PoiType.Depot) DoDepotPoiProcess(delta);
+		if (PointOfInterestType == PoiType.Destination) DoDestPoiProcess(delta);
 	}
 
 	public bool CheckInteraction()
@@ -48,40 +49,29 @@ public partial class Poi : StaticBody2D
 		return false;
     }
 
-	public virtual void DoPoiProcess(double delta)
-	{	
-	}
+    public void DoDepotPoiProcess(double delta)
+    {
+        if (CheckInteraction())
+        {
+			_player.GetInventory().CheckWeightAndAddItem(DeliverableItems.EnumItem.CowMilk);
+        }
+    }
 
+    public void DoDestPoiProcess(double delta)
+    {
+        if (CheckInteraction())
+        {
+
+        }
+    }
+
+    public struct DeliveryRequest
+    {
+
+    }
     public enum PoiType
 	{
 		Depot, Destination
 	}
 
-
-    public partial class DepotPoi : Poi
-    {
-        public override void DoPoiProcess(double delta)
-        {
-            if (CheckInteraction())
-			{
-
-			}
-        }
-    }
-
-    public partial class DeliveryDestinationPoi : Poi
-	{
-        public override void DoPoiProcess(double delta)
-        {
-            if (CheckInteraction())
-			{
-
-			}
-        }
-
-		public struct DeliveryRequest
-		{
-
-		}
-    }
 }

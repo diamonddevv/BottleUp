@@ -26,7 +26,7 @@ public partial class Player : CharacterBody2D
 	[Export] public float Friction { get; set; } = 1.005f;
 	[Export] public float GrassFriction { get; set; } = 1.15f;
 	[Export] public float CameraSlide { get; set; } = 18f;
-	[Export] public float SquareInteractDistanceThreshold { get; set; } = 1e4f;
+	[Export] public float SquareInteractDistanceThreshold { get; set; } = 8e3f;
 
 	[ExportCategory("Other Nodes")]
 	[Export] public NodePath Camera;
@@ -70,7 +70,7 @@ public partial class Player : CharacterBody2D
 		// Add GrassCollider Properties
 		_grassCollider.BodyEntered += (body) =>
 		{
-            if (body is Map map)
+			if (body is Map map)
 			{
 				if (((byte)map.TileSet.GetPhysicsLayerCollisionMask(0)).IsBitSet(0))
 				{
@@ -107,44 +107,44 @@ public partial class Player : CharacterBody2D
 		_camera.Position = _cameraSlide;
 	}
 
-    public void ControlTick()
-    {
-        _lastAccelInputTick = _accelInputTick;
-        _lastTurnInputTick = _turnInputTick;
-        _lastHandbrakeInputTick = _handbrakeInputTick;
+	public void ControlTick()
+	{
+		_lastAccelInputTick = _accelInputTick;
+		_lastTurnInputTick = _turnInputTick;
+		_lastHandbrakeInputTick = _handbrakeInputTick;
 		_lastInteractInputTick = _interactInputTick;
 
-        _accelInputTick = 0;
-        _turnInputTick = 0;
-        _handbrakeInputTick = false;
-        _boostInputTick = false;
-        _interactInputTick = false;
+		_accelInputTick = 0;
+		_turnInputTick = 0;
+		_handbrakeInputTick = false;
+		_boostInputTick = false;
+		_interactInputTick = false;
 
-        if (Input.IsKeyPressed(Accelerate)) _accelInputTick += 1;
-        if (Input.IsKeyPressed(Brake)) _accelInputTick -= 1;
+		if (Input.IsKeyPressed(Accelerate)) _accelInputTick += 1;
+		if (Input.IsKeyPressed(Brake)) _accelInputTick -= 1;
 
-        if (Input.IsKeyPressed(LeftTurn)) _turnInputTick += 1;
-        if (Input.IsKeyPressed(RightTurn)) _turnInputTick -= 1;
+		if (Input.IsKeyPressed(LeftTurn)) _turnInputTick += 1;
+		if (Input.IsKeyPressed(RightTurn)) _turnInputTick -= 1;
 
-        if (Input.IsKeyPressed(Handbrake)) _handbrakeInputTick = true;
-        if (Input.IsKeyPressed(Boost)) _boostInputTick = true;
+		if (Input.IsKeyPressed(Handbrake)) _handbrakeInputTick = true;
+		if (Input.IsKeyPressed(Boost)) _boostInputTick = true;
 
-        if (Input.IsKeyPressed(Interact)) _interactInputTick = true;
-    }
+		if (Input.IsKeyPressed(Interact)) _interactInputTick = true;
+	}
 
-    #region Movement Controller
+	#region Movement Controller
 
-    public void ApplyMovement(double delta)
+	public void ApplyMovement(double delta)
 	{
 		var frameMaxSpeed = MaxSpeed;
 		if (_boostInputTick && _boostTime > 0)
 		{
-            frameMaxSpeed = MaxSpeed * BoostSpeedMultiplier;
+			frameMaxSpeed = MaxSpeed * BoostSpeedMultiplier;
 			_boostTime -= (float)delta;
-        } else
+		} else
 		{
 			if (!_boostInputTick && _boostTime < BoostMaxTimeSeconds) _boostTime += (float)delta / (BoostRegainTimeSeconds / BoostMaxTimeSeconds);
-        }
+		}
 
 		_turnMultiplier = 1;
 
@@ -183,7 +183,7 @@ public partial class Player : CharacterBody2D
 
 	public void DoCollisions(double delta)
 	{
-        if (_onGrass && _speed != 0) Velocity /= GrassFriction + .25f / _speed;
+		if (_onGrass && _speed != 0) Velocity /= GrassFriction + .25f / _speed;
 
 		MoveAndSlide();
 	}
@@ -193,6 +193,6 @@ public partial class Player : CharacterBody2D
 	#region Getters
 	public bool GetIsInteracting() => _interactInputTick && !_lastInteractInputTick;
 	public PlayerInventoryHandler GetInventory() => _inventory;
-    #endregion
+	#endregion
 
 }
