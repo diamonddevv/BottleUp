@@ -1,0 +1,130 @@
+[gd_scene load_steps=11 format=3 uid="uid://c0gnnuv46qov1"]
+
+[ext_resource type="Script" path="res://asset/script/GUI/HUD.cs" id="1_86cy1"]
+[ext_resource type="Script" path="res://asset/script/GUI/Pause.cs" id="2_gl064"]
+[ext_resource type="Texture2D" uid="uid://6l64o182aa63" path="res://asset/texture/ui/pause.png" id="2_lhms7"]
+[ext_resource type="Texture2D" uid="uid://b750xja0dnx8c" path="res://asset/texture/ui/nav.png" id="2_rsfyo"]
+[ext_resource type="Texture2D" uid="uid://c3ylsn7vikpxi" path="res://asset/texture/ui/hud_icons.png" id="3_ylt1b"]
+[ext_resource type="Theme" uid="uid://y255ykpkjam0" path="res://asset/font/PixellariFontTheme.tres" id="4_le4bn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1f0ct"]
+atlas = ExtResource("3_ylt1b")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wkb66"]
+atlas = ExtResource("3_ylt1b")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cwcxo"]
+atlas = ExtResource("3_ylt1b")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hqh4y"]
+atlas = ExtResource("3_ylt1b")
+region = Rect2(16, 16, 16, 16)
+
+[node name="hud" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_86cy1")
+
+[node name="ingame" type="CanvasLayer" parent="."]
+
+[node name="margin" type="MarginContainer" parent="ingame"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="hbox" type="HBoxContainer" parent="ingame/margin"]
+layout_mode = 2
+
+[node name="nav" type="Control" parent="ingame/margin/hbox"]
+layout_mode = 2
+
+[node name="shape" type="TextureRect" parent="ingame/margin/hbox/nav"]
+layout_mode = 0
+offset_left = 1068.0
+offset_top = 505.0
+offset_right = 1108.0
+offset_bottom = 545.0
+scale = Vector2(5, 5)
+texture = ExtResource("2_rsfyo")
+
+[node name="pause" type="CanvasLayer" parent="."]
+visible = false
+script = ExtResource("2_gl064")
+EncapsulatingHud = NodePath("..")
+Resume = NodePath("overlay/buttonHbox/vbox1/resume")
+MainMenu = NodePath("overlay/buttonHbox/vbox1/menu")
+Settings = NodePath("overlay/buttonHbox/vbox2/settings")
+ReportBugs = NodePath("overlay/buttonHbox/vbox2/reportBugs")
+
+[node name="overlay" type="ColorRect" parent="pause"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.117647, 0.117647, 0.117647, 0.498039)
+
+[node name="titleMargin" type="MarginContainer" parent="pause/overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="pauseTitle" type="TextureRect" parent="pause/overlay/titleMargin"]
+custom_minimum_size = Vector2(500, 500)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+texture = ExtResource("2_lhms7")
+stretch_mode = 4
+
+[node name="buttonHbox" type="HBoxContainer" parent="pause/overlay"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 60.0
+offset_top = -220.0
+offset_right = 260.0
+offset_bottom = -154.0
+grow_vertical = 0
+scale = Vector2(2, 2)
+size_flags_horizontal = 0
+theme = ExtResource("4_le4bn")
+alignment = 1
+
+[node name="vbox1" type="VBoxContainer" parent="pause/overlay/buttonHbox"]
+layout_mode = 2
+
+[node name="resume" type="Button" parent="pause/overlay/buttonHbox/vbox1"]
+layout_mode = 2
+text = " Resume"
+icon = SubResource("AtlasTexture_1f0ct")
+flat = true
+
+[node name="menu" type="Button" parent="pause/overlay/buttonHbox/vbox1"]
+layout_mode = 2
+text = "Main Menu"
+icon = SubResource("AtlasTexture_wkb66")
+flat = true
+
+[node name="vbox2" type="VBoxContainer" parent="pause/overlay/buttonHbox"]
+layout_mode = 2
+
+[node name="settings" type="Button" parent="pause/overlay/buttonHbox/vbox2"]
+layout_mode = 2
+text = " Settings"
+icon = SubResource("AtlasTexture_cwcxo")
+flat = true
+
+[node name="reportBugs" type="Button" parent="pause/overlay/buttonHbox/vbox2"]
+layout_mode = 2
+text = "Report Bugs"
+icon = SubResource("AtlasTexture_hqh4y")
+flat = true

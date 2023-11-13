@@ -8,18 +8,26 @@ using System.Security.AccessControl;
 public partial class StackedSprite : Sprite2D
 {
     private bool _showSprites = true;
+    private float _displayRotation = 0;
     [Export] public bool ShowSprites
     {
         get => _showSprites;
         set => SetShowSprites(value);
     }
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+
+    [Export] public float DisplayRotation
+    {
+        get => _displayRotation;
+        set => SetDispRotation(value);
+    }
+
+
+    public override void _Ready()
 	{
 		DrawSprites();
 	}
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
+    
     public override void _Process(double delta)
 	{
 	}
@@ -29,6 +37,14 @@ public partial class StackedSprite : Sprite2D
         _showSprites = show;
         if (show) DrawSprites();
         else ClearSprites();
+    }
+
+    private void SetDispRotation(float rot)
+    {
+        if (Engine.IsEditorHint())
+        {
+            SetRotation(rot);
+        }
     }
 
 

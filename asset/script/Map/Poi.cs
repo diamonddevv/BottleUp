@@ -6,7 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 
 public partial class Poi : StaticBody2D
 {
-	[Export] public PoiType PointOfInterestType { get; set; }
+	[Export] public PoiType PointOfInterestType { get; set; } = PoiType.Destination;
 	[Export] public NodePath Map { get; set; }
 
 

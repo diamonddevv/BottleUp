@@ -1,0 +1,7 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://y255ykpkjam0"]
+
+[ext_resource type="FontFile" uid="uid://y557kw7ev4pj" path="res://asset/font/pixellari.ttf" id="1_aauqt"]
+
+[resource]
+default_font = ExtResource("1_aauqt")
+default_font_size = 0

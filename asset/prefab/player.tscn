@@ -10,7 +10,7 @@ size = Vector2(10, 21)
 
 [node name="player" type="CharacterBody2D"]
 position = Vector2(1, 0)
-collision_mask = 5
+collision_mask = 13
 script = ExtResource("1_108yg")
 
 [node name="sprite" type="Sprite2D" parent="."]
@@ -21,14 +21,17 @@ region_enabled = true
 script = ExtResource("3_8upxq")
 
 [node name="shape" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(0, 6)
 shape = SubResource("RectangleShape2D_7vtbi")
 debug_color = Color(0, 0.6, 0.701961, 0.419608)
 
 [node name="grassCollider" type="Area2D" parent="."]
+visible = false
 collision_mask = 2
 
 [node name="shape" type="CollisionShape2D" parent="grassCollider"]
+visible = false
 position = Vector2(0, 6)
 shape = SubResource("RectangleShape2D_7vtbi")
 

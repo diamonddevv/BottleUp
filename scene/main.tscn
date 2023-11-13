@@ -1,16 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://bn63bkq883adu"]
+[gd_scene load_steps=4 format=3 uid="uid://bn63bkq883adu"]
 
 [ext_resource type="PackedScene" uid="uid://bmsja7y4omkjr" path="res://asset/prefab/player.tscn" id="1_cj3hu"]
+[ext_resource type="PackedScene" uid="uid://c0gnnuv46qov1" path="res://asset/ui/hud.tscn" id="1_l1ahy"]
 [ext_resource type="PackedScene" uid="uid://c4yvit5cxiucl" path="res://asset/prefab/map.tscn" id="1_rsrif"]
 
 [node name="main" type="Node"]
+
+[node name="hud" parent="." instance=ExtResource("1_l1ahy")]
 
 [node name="Map" parent="." instance=ExtResource("1_rsrif")]
 Player = NodePath("../player")
 
 [node name="playerCamera" type="Camera2D" parent="."]
+position = Vector2(1360, -49)
 zoom = Vector2(4, 4)
 
 [node name="player" parent="." instance=ExtResource("1_cj3hu")]
-position = Vector2(-1840, -881)
+position = Vector2(559, 3355)
 Camera = NodePath("../playerCamera")
