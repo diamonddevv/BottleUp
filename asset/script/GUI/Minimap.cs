@@ -119,8 +119,8 @@ public partial class Minimap : Control
 			_depot.Position = _minimapDepotPosition;
 			_depot.Rotation = (RotateEverything ? 1 : 0) * _player.Rotation;
 
-			
 
+			var scale = _map.Scale;
 			if (_destinations != null)
 			{
 				foreach (var t in _destinations)
@@ -128,7 +128,7 @@ public partial class Minimap : Control
 					t.icon.Position = t.pos;
 					t.icon.Rotation = (RotateEverything ? 1 : 0) * _player.Rotation;
 
-					var dist = _player.Position.DistanceSquaredTo(t.pos);
+					var dist = _player.Position.DistanceSquaredTo(t.pos * scale);
 					if (float.IsNaN(closestDestDist) || dist < closestDestDist)
 					{
 						closestDest = t;
@@ -156,7 +156,8 @@ public partial class Minimap : Control
 			}
 
 			(_navArrow.Texture as AtlasTexture).Region = new Rect2(16 * _minimapNavArrowDistIndex, 32, 16, 16);
-			_navArrow.Rotation = _player.Position.AngleTo(closestDest.pos);
+			var vec = ((closestDest.pos * scale) - _player.Position).Normalized();
+			_navArrow.Rotation = Mathf.Atan2(vec.Y, vec.X);
 
         }
     }
