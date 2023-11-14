@@ -10,7 +10,7 @@ public partial class Map : TileMap
 
 	public override void _Ready()
 	{
-		_player = GetNode<Player>(Player);
+		if (Player != null) _player = GetNode<Player>(Player);
 	}
 
 	

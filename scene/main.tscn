@@ -6,8 +6,6 @@
 
 [node name="main" type="Node"]
 
-[node name="hud" parent="." instance=ExtResource("1_l1ahy")]
-
 [node name="Map" parent="." instance=ExtResource("1_rsrif")]
 Player = NodePath("../player")
 
@@ -18,3 +16,7 @@ zoom = Vector2(4, 4)
 [node name="player" parent="." instance=ExtResource("1_cj3hu")]
 position = Vector2(559, 3355)
 Camera = NodePath("../playerCamera")
+
+[node name="hud" parent="." instance=ExtResource("1_l1ahy")]
+Player = NodePath("../player")
+MapScene = ExtResource("1_rsrif")

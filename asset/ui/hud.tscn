@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" path="res://asset/script/GUI/HUD.cs" id="1_86cy1"]
 [ext_resource type="Script" path="res://asset/script/GUI/Pause.cs" id="2_gl064"]
+[ext_resource type="PackedScene" uid="uid://bqeq8xrs1ycit" path="res://asset/ui/minimap.tscn" id="2_jg8ko"]
 [ext_resource type="Texture2D" uid="uid://6l64o182aa63" path="res://asset/texture/ui/pause.png" id="2_lhms7"]
-[ext_resource type="Texture2D" uid="uid://b750xja0dnx8c" path="res://asset/texture/ui/nav.png" id="2_rsfyo"]
 [ext_resource type="Texture2D" uid="uid://c3ylsn7vikpxi" path="res://asset/texture/ui/hud_icons.png" id="3_ylt1b"]
 [ext_resource type="Theme" uid="uid://y255ykpkjam0" path="res://asset/font/PixellariFontTheme.tres" id="4_le4bn"]
 
@@ -30,26 +30,19 @@ script = ExtResource("1_86cy1")
 [node name="ingame" type="CanvasLayer" parent="."]
 
 [node name="margin" type="MarginContainer" parent="ingame"]
-anchors_preset = 15
+anchors_preset = 1
+anchor_left = 1.0
 anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -145.0
+offset_top = 145.0
+offset_right = -145.0
+offset_bottom = 145.0
+grow_horizontal = 0
 
-[node name="hbox" type="HBoxContainer" parent="ingame/margin"]
+[node name="minimap" parent="ingame/margin" instance=ExtResource("2_jg8ko")]
 layout_mode = 2
-
-[node name="nav" type="Control" parent="ingame/margin/hbox"]
-layout_mode = 2
-
-[node name="shape" type="TextureRect" parent="ingame/margin/hbox/nav"]
-layout_mode = 0
-offset_left = 1068.0
-offset_top = 505.0
-offset_right = 1108.0
-offset_bottom = 545.0
-scale = Vector2(5, 5)
-texture = ExtResource("2_rsfyo")
+size_flags_horizontal = 8
+size_flags_vertical = 0
 
 [node name="pause" type="CanvasLayer" parent="."]
 visible = false

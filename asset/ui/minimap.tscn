@@ -1,0 +1,135 @@
+[gd_scene load_steps=14 format=3 uid="uid://bqeq8xrs1ycit"]
+
+[ext_resource type="Script" path="res://asset/script/GUI/Minimap.cs" id="1_00k54"]
+[ext_resource type="Texture2D" uid="uid://n7j0sng53oi6" path="res://asset/texture/ui/minimap_frame.png" id="2_gce4b"]
+[ext_resource type="Texture2D" uid="uid://btlmb2t8ede7a" path="res://asset/texture/ui/minimap_icons.png" id="2_lar3h"]
+[ext_resource type="Theme" uid="uid://y255ykpkjam0" path="res://asset/font/PixellariFontTheme.tres" id="4_cwfpb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pgtnf"]
+atlas = ExtResource("2_lar3h")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t3i8p"]
+atlas = ExtResource("2_lar3h")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4mshq"]
+atlas = ExtResource("2_lar3h")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w0wc0"]
+atlas = ExtResource("2_lar3h")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w4y8y"]
+atlas = ExtResource("2_lar3h")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eoisg"]
+atlas = ExtResource("2_lar3h")
+region = Rect2(32, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1b5hi"]
+atlas = ExtResource("2_lar3h")
+region = Rect2(48, 16, 16, 16)
+
+[sub_resource type="LabelSettings" id="LabelSettings_jugr0"]
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aag84"]
+atlas = ExtResource("2_lar3h")
+region = Rect2(0, 32, 16, 16)
+
+[node name="minimap" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_00k54")
+CameraZoom = Vector2(10, 10)
+Player = NodePath("container/view/player")
+CompassPivot = NodePath("container/frame/pointPivot")
+North = NodePath("container/frame/pointPivot/north")
+East = NodePath("container/frame/pointPivot/east")
+South = NodePath("container/frame/pointPivot/south")
+West = NodePath("container/frame/pointPivot/west")
+Depot = NodePath("container/view/depot")
+Destination = NodePath("container/view/destination")
+
+[node name="container" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -125.0
+offset_top = -125.0
+offset_right = 125.0
+offset_bottom = 125.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="view" type="SubViewport" parent="container"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(250, 250)
+render_target_update_mode = 4
+
+[node name="cam" type="Camera2D" parent="container/view"]
+ignore_rotation = false
+
+[node name="player" type="Sprite2D" parent="container/view"]
+visible = false
+texture = SubResource("AtlasTexture_pgtnf")
+
+[node name="depot" type="Sprite2D" parent="container/view"]
+visible = false
+texture = SubResource("AtlasTexture_t3i8p")
+
+[node name="destination" type="Sprite2D" parent="container/view"]
+visible = false
+texture = SubResource("AtlasTexture_4mshq")
+
+[node name="frame" type="TextureRect" parent="container"]
+custom_minimum_size = Vector2(250, 250)
+layout_mode = 2
+texture = ExtResource("2_gce4b")
+
+[node name="pointPivot" type="Node2D" parent="container/frame"]
+visible = false
+
+[node name="north" type="Sprite2D" parent="container/frame/pointPivot"]
+position = Vector2(-1010, -20)
+texture = SubResource("AtlasTexture_w0wc0")
+
+[node name="east" type="Sprite2D" parent="container/frame/pointPivot"]
+position = Vector2(-1010, -20)
+texture = SubResource("AtlasTexture_w4y8y")
+
+[node name="south" type="Sprite2D" parent="container/frame/pointPivot"]
+position = Vector2(-1010, -20)
+texture = SubResource("AtlasTexture_eoisg")
+
+[node name="west" type="Sprite2D" parent="container/frame/pointPivot"]
+position = Vector2(-1010, -20)
+texture = SubResource("AtlasTexture_1b5hi")
+
+[node name="closestDestLabel" type="Label" parent="."]
+layout_mode = 2
+offset_left = -68.0
+offset_top = 150.0
+offset_right = 69.0
+offset_bottom = 188.0
+theme = ExtResource("4_cwfpb")
+text = "Closest Destination:
+123m"
+label_settings = SubResource("LabelSettings_jugr0")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="navArrow" type="Sprite2D" parent="."]
+position = Vector2(0, 215)
+scale = Vector2(5, 5)
+texture = SubResource("AtlasTexture_aag84")

@@ -12,6 +12,7 @@ namespace BottleUp.asset.script.Util
         public const string GITHUB_REPOSITORY = "https://github.com/diamonddevv/BottleUp";
         public const string ISSUES_GITHUB_REPOSITORY = "https://github.com/diamonddevv/BottleUp/issues";
 
+
         public static T Test<T>(this T t)
         {
             GD.Print(t);

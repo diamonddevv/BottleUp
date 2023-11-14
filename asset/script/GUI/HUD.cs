@@ -7,9 +7,16 @@ public partial class HUD : CanvasLayer
 	[ExportCategory("UI Controls")]
 	[Export] public Key Pause { get; set; } = Key.Escape;
 
+	[ExportCategory("Minimap")]
+	[Export] public NodePath Player;
+	[Export] public PackedScene MapScene;
 
-	//
-	private CanvasLayer _pauseOverlay;
+
+    //
+    private CanvasLayer _pauseOverlay;
+    private Minimap _minimap;
+    private Player _player;
+    private PackedScene _mapScene;
 
 	private bool _lastPauseControlTick;
 	private bool _pauseControlTick;
@@ -18,6 +25,12 @@ public partial class HUD : CanvasLayer
 	public override void _Ready()
 	{
 		_pauseOverlay = GetNode<CanvasLayer>("pause");
+		_minimap = GetNode<Minimap>("ingame/margin/minimap");
+
+		_player = GetNode<Player>(Player);
+
+		_minimap.SetMapScene(MapScene);
+		_minimap.SetPlayer(_player);
 	}
 
 	
