@@ -1,0 +1,43 @@
+[gd_scene load_steps=5 format=3 uid="uid://cm7havnku3tnb"]
+
+[ext_resource type="Script" path="res://asset/script/GUI/Inventory.cs" id="1_bq53b"]
+[ext_resource type="Texture2D" uid="uid://be3vuswqlnsso" path="res://asset/texture/ui/inventory_page_hud.png" id="1_faxqb"]
+[ext_resource type="PackedScene" uid="uid://bo6iix6btgced" path="res://asset/prefab/deliverable_item.tscn" id="2_5qidv"]
+[ext_resource type="Texture2D" uid="uid://c52dtjdf4cqc2" path="res://asset/texture/ui/inventory_page_handwritten_header.png" id="2_gd87e"]
+
+[node name="inventory" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+scale = Vector2(10, 10)
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("1_bq53b")
+ContentsRoot = NodePath("texture/contents")
+InventoryItemScene = ExtResource("2_5qidv")
+
+[node name="texture" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_faxqb")
+
+[node name="header" type="TextureRect" parent="texture"]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 8.0
+offset_right = 91.0
+offset_bottom = 24.0
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_gd87e")
+
+[node name="contents" type="Node2D" parent="texture"]
+position = Vector2(20, 14)

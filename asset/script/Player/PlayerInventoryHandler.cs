@@ -3,12 +3,16 @@ using BottleUp.asset.script.Util;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using static BottleUp.asset.script.Game.DeliverableItems;
 
 public partial class PlayerInventoryHandler : Node
 {
-	public const int MaxMilkUnitsCarriable = 20;
+    [Signal]
+    public delegate void InventoryUpdatedEventHandler();
+
+    public const int MaxMilkUnitsCarriable = 20;
 
 	private List<EnumItem> _carriedItems;
 	private int _carriedWeight;
@@ -29,6 +33,8 @@ public partial class PlayerInventoryHandler : Node
 
 			$"Added: {item}; Weight now: {_carriedWeight}".Test();
 
+			EmitSignal(SignalName.InventoryUpdated);
+
 			return true;
 		}
 		else return false;
@@ -37,10 +43,27 @@ public partial class PlayerInventoryHandler : Node
 	public bool RemoveItemOfType(EnumItem item)
 	{
 		var v = _carriedItems.Remove(item);
-		if (v)
+        EmitSignal(SignalName.InventoryUpdated);
+        if (v)
 		{
 			_carriedWeight -= GetByEnum(item).MilkUnitWeight;
 		}
 		return v;
+	}
+
+	public Dictionary<EnumItem, int> GetCarriedItemsWithCount()
+	{
+		var dict = new Dictionary<EnumItem, int>();
+		foreach (var item in _carriedItems)
+		{
+			if (dict.ContainsKey(item))
+			{
+				dict[item] += 1;
+			} else
+			{
+				dict.Add(item, 1);
+			}
+		}
+		return dict;
 	}
 }

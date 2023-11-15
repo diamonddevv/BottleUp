@@ -546,7 +546,7 @@ shader_parameter/strength = 2.5
 shader_parameter/uv_scaling = 1.0
 shader_parameter/movement_direction = Vector2(1, 0)
 shader_parameter/movement_speed = 0.13
-shader_parameter/color = Color(0.0470588, 0.572549, 0.780392, 0.639216)
+shader_parameter/color = Color(0.0352941, 0.572549, 0.596078, 0.639216)
 shader_parameter/NOISE_TEXTURE = SubResource("NoiseTexture2D_t0fpx")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i1tio"]

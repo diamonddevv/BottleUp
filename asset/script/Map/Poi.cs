@@ -54,6 +54,7 @@ public partial class Poi : StaticBody2D
         if (CheckInteraction())
         {
 			_player.GetInventory().CheckWeightAndAddItem(DeliverableItems.EnumItem.CowMilk);
+			_player.GetInventory().CheckWeightAndAddItem(DeliverableItems.EnumItem.StrawberryMilk);
         }
     }
 

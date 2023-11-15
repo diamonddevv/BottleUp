@@ -72,4 +72,6 @@ public partial class HUD : CanvasLayer
 
 	public void SetPaused(bool b) => _isPaused = b;
 	public bool GetPaused() => _isPaused;
+
+	public Player GetPlayer() => _player;
 }

@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://bo6iix6btgced"]
+[gd_scene load_steps=10 format=3 uid="uid://bo6iix6btgced"]
 
 [ext_resource type="Texture2D" uid="uid://dfsjn8rccr1iq" path="res://asset/texture/items.png" id="1_geiuk"]
 [ext_resource type="Script" path="res://asset/script/Tool/DeliverableItem.cs" id="1_xkc1k"]
 [ext_resource type="Shader" path="res://asset/shader/Tint.gdshader" id="3_4nnsr"]
+[ext_resource type="Theme" uid="uid://y255ykpkjam0" path="res://asset/font/PixellariFontTheme.tres" id="4_xhja4"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xsl4y"]
 atlas = ExtResource("1_geiuk")
@@ -20,8 +21,13 @@ region = Rect2(0, 16, 16, 16)
 atlas = ExtResource("1_geiuk")
 region = Rect2(16, 0, 16, 16)
 
+[sub_resource type="LabelSettings" id="LabelSettings_kgptt"]
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
 [node name="DeliverableItem" type="Node2D"]
 script = ExtResource("1_xkc1k")
+Label = NodePath("text/label")
 
 [node name="bottle" type="Sprite2D" parent="."]
 texture = SubResource("AtlasTexture_xsl4y")
@@ -32,3 +38,14 @@ texture = SubResource("AtlasTexture_611yd")
 
 [node name="item" type="Sprite2D" parent="."]
 texture = SubResource("AtlasTexture_qlwq2")
+
+[node name="text" type="Node2D" parent="."]
+position = Vector2(8, 0)
+
+[node name="label" type="Label" parent="text"]
+offset_right = 40.0
+offset_bottom = 23.0
+scale = Vector2(0.25, 0.25)
+theme = ExtResource("4_xhja4")
+text = "0x Cow Milk : 0mu"
+label_settings = SubResource("LabelSettings_kgptt")

@@ -15,6 +15,10 @@ public partial class DeliverableItem : Node2D
 		set => SetItem(value);
 	}
 
+	[Export] public NodePath Label;
+	[Export] public bool UseInventoryLabel { get; set; } = true;
+	[Export] public int Count { get; set; } = 0;
+
 
     private void SetItem(DeliverableItems.EnumItem item)
     {
@@ -40,17 +44,29 @@ public partial class DeliverableItem : Node2D
     private Sprite2D _bottle;
 	private ShaderMaterial _milkTintShader;
 	private Sprite2D _item;
+
+	private Label _label;
+
 	public override void _Ready()
 	{
 		_bottle = GetNode<Sprite2D>("bottle");
         _milkTintShader = _bottle.GetNode<Sprite2D>("milk").Material as ShaderMaterial;
 		_item = GetNode<Sprite2D>("item");
+
+		_label = GetNode<Label>(Label);
 	}
+
+	
 
     public override void _Process(double delta)
     {
+		if (UseInventoryLabel)
+		{
+			_label.Text = FormatInventoryLabel();
+		}
     }
 
+	private string FormatInventoryLabel() => $"{Count}x {DeliverableItems.GetByEnum(Item).Name} : {DeliverableItems.GetByEnum(Item).MilkUnitWeight * Count}mu";
 
 	public string GetName() => DeliverableItems.Items[(int)_deliverableItem].Name;
 	public string GetDescription() => DeliverableItems.Items[(int)_deliverableItem].Description;

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,12 +13,10 @@ namespace BottleUp.asset.script.Util
         public const float DEGTORAD = Mathf.Pi / 180;
         public const float RADTODEG = 180 / Mathf.Pi;
 
-        public const float SQUARED_PIXELS_TO_ARB_METERS = 2e-5f;
+        public const float SQUARED_PIXELS_TO_ARB_METERS = 4.5e-5f;
 
         public static float SqrPxToArbMeters(float sqrpx) => sqrpx * SQUARED_PIXELS_TO_ARB_METERS;
         public static float ArbMetersToSqrPx(float arbMeters) => arbMeters / SQUARED_PIXELS_TO_ARB_METERS;
-
-
         public static Vector2 RadToVec(float radians) => new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
         public static Vector2 DegToVec(float degrees) => RadToVec(degrees * DEGTORAD);
 

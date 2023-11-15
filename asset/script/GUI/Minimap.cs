@@ -46,7 +46,6 @@ public partial class Minimap : Control
     private Map _map;
 	private Player _player;
 
-
 	private int _minimapNavArrowDistIndex;
 	private Vector2 _minimapDepotPosition;
 
@@ -80,7 +79,7 @@ public partial class Minimap : Control
 		_frame.Size = _container.Size;
 		_view.Size = _container.Size.RoundInts();
 		_closestDestLabel.Position = _frame.Position + _frame.Size.Multiply(0, .6f) - _closestDestLabel.Size.Multiply(.5f, 0);
-		_navArrow.Position = _frame.Position + _frame.Size.Multiply(0, .8f);
+		_navArrow.Position = _frame.Position + _frame.Size.Multiply(0, .82f);
 
 		_navArrow.Scale = BottleUpMath.Uniform(3);
     }
@@ -128,7 +127,7 @@ public partial class Minimap : Control
 					t.icon.Position = t.pos;
 					t.icon.Rotation = (RotateEverything ? 1 : 0) * _player.Rotation;
 
-					var dist = _player.Position.DistanceSquaredTo(t.pos * scale);
+					var dist = _playerIcon.Position.DistanceSquaredTo(t.pos * scale);
 					if (float.IsNaN(closestDestDist) || dist < closestDestDist)
 					{
 						closestDest = t;
@@ -156,9 +155,8 @@ public partial class Minimap : Control
 			}
 
 			(_navArrow.Texture as AtlasTexture).Region = new Rect2(16 * _minimapNavArrowDistIndex, 32, 16, 16);
-			var vec = ((closestDest.pos * scale) - _player.Position).Normalized();
-			_navArrow.Rotation = Mathf.Atan2(vec.Y, vec.X);
 
+			_navArrow.Rotation = CompassDirRad(_playerIcon.Position, closestDest.pos * scale);
         }
     }
 
@@ -260,4 +258,10 @@ public partial class Minimap : Control
 
 		return $"Closest Destination: \n{d}";
 	}
+
+    public static float CompassDirRad(Vector2 from, Vector2 to)
+    {
+		var v = from.DirectionTo(to).Angle() + 90; // +90 to make the angle along the y axis rather than x axis? not entirely sure how this works tbh but it does
+		return v;
+    }
 }
