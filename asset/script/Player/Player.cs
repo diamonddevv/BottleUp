@@ -14,6 +14,7 @@ public partial class Player : CharacterBody2D
 	[Export] public Key Handbrake { get; set; } = Key.Space;
 	[Export] public Key Boost { get; set; } = Key.Shift;
 	[Export] public Key Interact { get; set; } = Key.E;
+	[Export] public Key FullMap { get; set; } = Key.M;
 
 	[ExportCategory("Movement/Physics")]
 	[Export] public float ForwardDegreeOffset { get; set; } = 90;
@@ -27,6 +28,11 @@ public partial class Player : CharacterBody2D
 	[Export] public float GrassFriction { get; set; } = 1.15f;
 	[Export] public float CameraSlide { get; set; } = 18f;
 	[Export] public float SquareInteractDistanceThreshold { get; set; } = 8e3f;
+
+	[ExportCategory("Misc")]
+	[Export] public Vector2 DefaultCameraZoomFactor = new Vector2(4, 4);
+	[Export] public Vector2 FullMapZoomFactor = new Vector2(.1f, .1f);
+	[Export] public float FullMapTimeToTransition = .5f;
 
 	[ExportCategory("Other Nodes")]
 	[Export] public NodePath Camera;
@@ -50,11 +56,16 @@ public partial class Player : CharacterBody2D
 	private bool _boostInputTick;
 	private bool _lastInteractInputTick;
 	private bool _interactInputTick;
-	private float _twist;
+    private bool _lastFullmapInputTick;
+    private bool _fullmapInputTick;
+    private float _twist;
 	private Vector2 _cameraSlide;
 	private Vector2 _maxCameraSlideVec;
 	private bool _onGrass;
 	private float _boostTime;
+	private float _mapTransitionTime;
+	private bool _mapTransitionState;
+	private bool _isFullMap;
 
 	public override void _Ready()
 	{
@@ -105,7 +116,22 @@ public partial class Player : CharacterBody2D
 
 		_cameraSlide = Position + (BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * BottleUpMath.Lerp(0, CameraSlide, _speed / MaxSpeed));
 		_camera.Position = _cameraSlide;
-	}
+
+		if (_fullmapInputTick && !_lastFullmapInputTick)
+		{
+			_mapTransitionState = true;
+			_isFullMap = !_isFullMap;
+			_mapTransitionTime = 0;
+		}
+
+        if (_mapTransitionState)
+		{
+			_camera.Zoom = _camera.Zoom.Lerp(_isFullMap ? FullMapZoomFactor : DefaultCameraZoomFactor, Mathf.Clamp(_mapTransitionTime / FullMapTimeToTransition, 0, 1));
+
+			_mapTransitionTime += (float)delta;
+		}
+
+    }
 
 	public void ControlTick()
 	{
@@ -113,12 +139,14 @@ public partial class Player : CharacterBody2D
 		_lastTurnInputTick = _turnInputTick;
 		_lastHandbrakeInputTick = _handbrakeInputTick;
 		_lastInteractInputTick = _interactInputTick;
+		_lastFullmapInputTick = _fullmapInputTick;
 
 		_accelInputTick = 0;
 		_turnInputTick = 0;
 		_handbrakeInputTick = false;
 		_boostInputTick = false;
 		_interactInputTick = false;
+		_fullmapInputTick = false;
 
 		if (Input.IsKeyPressed(Accelerate)) _accelInputTick += 1;
 		if (Input.IsKeyPressed(Brake)) _accelInputTick -= 1;
@@ -130,6 +158,7 @@ public partial class Player : CharacterBody2D
 		if (Input.IsKeyPressed(Boost)) _boostInputTick = true;
 
 		if (Input.IsKeyPressed(Interact)) _interactInputTick = true;
+		if (Input.IsKeyPressed(FullMap)) _fullmapInputTick = true;
 	}
 
 	#region Movement Controller
