@@ -32,9 +32,10 @@ public partial class Player : CharacterBody2D
 	[ExportCategory("Misc")]
 	[Export] public Vector2 DefaultCameraZoomFactor = new Vector2(4, 4);
 	[Export] public Vector2 FullMapZoomFactor = new Vector2(.1f, .1f);
-	[Export] public float FullMapTimeToTransition = .5f;
+	[Export] public float FullMapTimeToTransition = .75f;
+	[Export] public Vector2 FullmapTargetPos = new Vector2(0, -1000f);
 
-	[ExportCategory("Other Nodes")]
+    [ExportCategory("Other Nodes")]
 	[Export] public NodePath Camera;
 
 	// other nodes
@@ -66,6 +67,7 @@ public partial class Player : CharacterBody2D
 	private float _mapTransitionTime;
 	private bool _mapTransitionState;
 	private bool _isFullMap;
+	private Vector2 _fullMapTargetPos;
 
 	public override void _Ready()
 	{
@@ -78,8 +80,10 @@ public partial class Player : CharacterBody2D
 		_maxCameraSlideVec = BottleUpMath.Uniform(CameraSlide);
 
 
-		// Add GrassCollider Properties
-		_grassCollider.BodyEntered += (body) =>
+		_camera.Zoom = DefaultCameraZoomFactor;
+
+        // Add GrassCollider Properties
+        _grassCollider.BodyEntered += (body) =>
 		{
 			if (body is Map map)
 			{
@@ -115,7 +119,8 @@ public partial class Player : CharacterBody2D
 		ApplyMovement(delta);
 
 		_cameraSlide = Position + (BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * BottleUpMath.Lerp(0, CameraSlide, _speed / MaxSpeed));
-		_camera.Position = _cameraSlide;
+		if (!_isFullMap) _camera.Position = _cameraSlide;
+		else _camera.Position = _fullMapTargetPos;
 
 		if (_fullmapInputTick && !_lastFullmapInputTick)
 		{
@@ -126,9 +131,19 @@ public partial class Player : CharacterBody2D
 
         if (_mapTransitionState)
 		{
-			_camera.Zoom = _camera.Zoom.Lerp(_isFullMap ? FullMapZoomFactor : DefaultCameraZoomFactor, Mathf.Clamp(_mapTransitionTime / FullMapTimeToTransition, 0, 1));
+			var pos = _isFullMap ? Position : FullmapTargetPos;
+			var newPos = _isFullMap ? FullmapTargetPos : Position;
+			var weight = Mathf.Clamp(_mapTransitionTime / FullMapTimeToTransition, 0, 1);
 
-			_mapTransitionTime += (float)delta;
+            _camera.Zoom = _camera.Zoom.Lerp(_isFullMap ? FullMapZoomFactor : DefaultCameraZoomFactor, weight);
+			_fullMapTargetPos = pos.Lerp(newPos, weight);
+
+            _mapTransitionTime += (float)delta;
+
+			if (weight >= 1)
+			{
+				_mapTransitionState = false;
+			}
 		}
 
     }

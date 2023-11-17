@@ -60,6 +60,7 @@ public partial class DeliverableItem : Node2D
 
     public override void _Process(double delta)
     {
+		
 		if (UseInventoryLabel)
 		{
 			_label.Text = FormatInventoryLabel();

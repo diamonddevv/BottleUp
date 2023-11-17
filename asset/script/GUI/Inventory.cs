@@ -1,3 +1,4 @@
+using BottleUp.asset.script.Game;
 using BottleUp.asset.script.Util;
 using Godot;
 using System;
@@ -31,6 +32,11 @@ public partial class Inventory : Control
             _playerInv = _hud.GetPlayer().GetInventory();
 			_playerInv.InventoryUpdated += Update;
         }
+
+		foreach (DeliverableItem i in _contentsRoot.GetChildren())
+		{
+			i.Item = (DeliverableItems.EnumItem)GD.RandRange(0, 11);
+		}
     }
 
 	public void Update()

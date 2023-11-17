@@ -9,7 +9,7 @@ public partial class Minimap : Control
 {
 	[ExportCategory("Minimap Options")]
 	[Export] public Vector2 CameraZoom = BottleUpMath.Uniform(8f);
-	[Export] public bool RotateEverything = false; // Rotates the entire map, rather than the player
+	[Export] public bool RotateEverything = true; // Rotates the entire map, rather than the player
 	[Export] public bool DisplayClosestDestinationDistance = true;
 
 	[ExportCategory("Minimap Icons")]
@@ -261,7 +261,8 @@ public partial class Minimap : Control
 
     public static float CompassDirRad(Vector2 from, Vector2 to)
     {
-		var v = from.DirectionTo(to).Angle() + 90; // +90 to make the angle along the y axis rather than x axis? not entirely sure how this works tbh but it does
-		return v;
+        // i thought +90 meant adding a right angle then i remembered this is not degrees this is radians and that is not a right angle
+        // tldr; i dont know how this works
+		return from.DirectionTo(to).Angle() + 90;
     }
 }

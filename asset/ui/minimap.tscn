@@ -48,6 +48,7 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 script = ExtResource("1_00k54")
 CameraZoom = Vector2(10, 10)
+RotateEverything = false
 Player = NodePath("container/view/player")
 CompassPivot = NodePath("container/frame/pointPivot")
 North = NodePath("container/frame/pointPivot/north")
