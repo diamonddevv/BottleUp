@@ -41,6 +41,7 @@ public partial class StackedSprite : Sprite2D
 
     private void SetDispRotation(float rot)
     {
+        _displayRotation = rot;
         if (Engine.IsEditorHint())
         {
             SetRotation(rot);

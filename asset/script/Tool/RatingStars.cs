@@ -5,8 +5,8 @@ using System;
 [Tool]
 public partial class RatingStars : Control
 {
-	private int _stars;
-	private double _percent;
+	private int _stars = 5;
+	private double _percent = .5f;
 
 	[ExportCategory("Stars")]
 	[Export] public double Percentage
@@ -37,6 +37,8 @@ public partial class RatingStars : Control
 	public override void _Ready()
 	{
 		_root = GetNode<Node2D>("root");
+		UpdateStars(StarCount);
+		SetPercentagePerStar(Percentage);
 	}
 
 	public override void _Process(double delta)
@@ -45,6 +47,9 @@ public partial class RatingStars : Control
 
 	private void UpdateStars(int count)
 	{
+		if (_root == null) return;
+		if (Star == null) return;
+
 		foreach (var child in _root.GetChildren()) child.QueueFree();
 
 		Star.Visible = false;
@@ -64,24 +69,25 @@ public partial class RatingStars : Control
 		}
 	}
 
-	private void SetPercentagePerStar(double totalPercentage)
+	private void SetPercentagePerStar(double total)
 	{
+		if (StarCount == 0) return;
+		if (_root == null) return;
+
 		double fullPerStar = 100 / StarCount;
-		double filledStars = totalPercentage / fullPerStar;
+		double fulls = Math.Floor(total / fullPerStar);
+		double last = (total % fullPerStar) / fullPerStar * 100;
 		foreach (TextureProgressBar star in _root.GetChildren())
 		{
-			if (filledStars > 1)
+			if (fulls > 0)
 			{
-				filledStars -= 1;
 				star.Value = 100;
-			} else if (filledStars > 0)
-			{
-				filledStars = 0;
-				star.Value = 100 * filledStars;
-			} else if (filledStars <= 0)
-			{
-				star.Value = 0;
+				fulls -= 1;
+				continue;
 			}
+
+			star.Value = last;
+			last = 0;
 		}
 	}
 }
