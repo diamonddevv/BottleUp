@@ -3,6 +3,8 @@ using BottleUp.asset.script.Util;
 using Godot;
 using System;
 using System.Security.Cryptography.X509Certificates;
+using static BottleUp.asset.script.Game.DeliverableItems;
+using static BottleUp.asset.script.Util.BottleUpHelper;
 
 public partial class Poi : StaticBody2D
 {
@@ -10,10 +12,16 @@ public partial class Poi : StaticBody2D
 	[Export] public NodePath Map { get; set; }
 
 
-	private float _sqrDistToPlayer;
+    [Signal]
+    public delegate void PoiDeliveryMadeEventHandler();
+
+
+    private float _sqrDistToPlayer;
 	private Sprite2D _sprite;
 	private Map _map;
 	private Player _player;
+
+	private MainGameManager.DeliveryRequest _delivery;
 	
 	public override void _Ready()
 	{
@@ -53,8 +61,7 @@ public partial class Poi : StaticBody2D
     {
         if (CheckInteraction())
         {
-			_player.GetInventory().CheckWeightAndAddItem(DeliverableItems.EnumItem.CowMilk);
-			_player.GetInventory().CheckWeightAndAddItem(DeliverableItems.EnumItem.StrawberryMilk);
+			// Open Depot UI
         }
     }
 
@@ -62,14 +69,15 @@ public partial class Poi : StaticBody2D
     {
         if (CheckInteraction())
         {
+			// Deliver Item
+			EmitSignal(SignalName.PoiDeliveryMade);
 
+			_delivery.Made = true;
         }
     }
 
-    public struct DeliveryRequest
-    {
+	public MainGameManager.DeliveryRequest GetDelivery() => _delivery;
 
-    }
     public enum PoiType
 	{
 		Depot, Destination

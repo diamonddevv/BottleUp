@@ -1,3 +1,4 @@
+using BottleUp.asset.script.Util;
 using Godot;
 using System;
 
@@ -11,10 +12,15 @@ public partial class HUD : CanvasLayer
 	[Export] public NodePath Player;
 	[Export] public PackedScene MapScene;
 
+	[ExportCategory("Misc.")]
+	[Export] public NodePath InGameTimer;
+
 
     //
     private CanvasLayer _pauseOverlay;
     private Minimap _minimap;
+    private Label _timerLabel;
+    private Timer _timer;
     private Player _player;
     private PackedScene _mapScene;
 
@@ -26,7 +32,9 @@ public partial class HUD : CanvasLayer
 	{
 		_pauseOverlay = GetNode<CanvasLayer>("pause");
 		_minimap = GetNode<Minimap>("ingame/margin/minimap");
+        _timerLabel = GetNode<Label>("ingame/timer");
 
+		_timer = GetNode<Timer>(InGameTimer);
 		_player = GetNode<Player>(Player);
 
 		_minimap.SetMapScene(MapScene);
@@ -38,6 +46,8 @@ public partial class HUD : CanvasLayer
 	{
 		ControlTick();
 		CheckPause();
+
+		if (_timer != null) _timerLabel.Text = BottleUpHelper.FormatTime(_timer.TimeLeft);
 
         GetTree().Paused = _isPaused;
         PauseTick(delta);

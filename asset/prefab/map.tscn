@@ -542,7 +542,7 @@ noise = SubResource("FastNoiseLite_1a1ds")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_b2ipo"]
 shader = ExtResource("3_n0acs")
-shader_parameter/strength = 2.5
+shader_parameter/strength = 5.0
 shader_parameter/uv_scaling = 1.0
 shader_parameter/movement_direction = Vector2(1, 0)
 shader_parameter/movement_speed = 0.13

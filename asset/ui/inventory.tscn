@@ -1,9 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://cm7havnku3tnb"]
+[gd_scene load_steps=7 format=3 uid="uid://cm7havnku3tnb"]
 
 [ext_resource type="Script" path="res://asset/script/GUI/Inventory.cs" id="1_bq53b"]
 [ext_resource type="Texture2D" uid="uid://be3vuswqlnsso" path="res://asset/texture/ui/inventory_page_hud.png" id="1_faxqb"]
 [ext_resource type="PackedScene" uid="uid://bo6iix6btgced" path="res://asset/prefab/deliverable_item.tscn" id="2_5qidv"]
 [ext_resource type="Texture2D" uid="uid://c52dtjdf4cqc2" path="res://asset/texture/ui/inventory_page_handwritten_header.png" id="2_gd87e"]
+[ext_resource type="Theme" uid="uid://y255ykpkjam0" path="res://asset/font/PixellariFontTheme.tres" id="5_dsckm"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_rtfvk"]
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
 
 [node name="inventory" type="Control"]
 layout_mode = 3
@@ -12,7 +17,9 @@ scale = Vector2(10, 10)
 size_flags_horizontal = 0
 size_flags_vertical = 0
 script = ExtResource("1_bq53b")
+MoreItemsText = "(+ more)"
 ContentsRoot = NodePath("texture/contents")
+TotalWeightLabel = NodePath("texture/totalWeight")
 InventoryItemScene = ExtResource("2_5qidv")
 
 [node name="texture" type="TextureRect" parent="."]
@@ -32,12 +39,26 @@ texture = ExtResource("1_faxqb")
 
 [node name="header" type="TextureRect" parent="texture"]
 layout_mode = 0
-offset_left = 11.0
+offset_left = 5.00001
 offset_top = 8.0
-offset_right = 91.0
+offset_right = 85.0
 offset_bottom = 24.0
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("2_gd87e")
 
+[node name="totalWeight" type="Label" parent="texture"]
+layout_mode = 0
+offset_left = 24.9
+offset_top = 8.7
+offset_right = 111.9
+offset_bottom = 27.7
+scale = Vector2(0.1, 0.1)
+theme = ExtResource("5_dsckm")
+text = "Total Weight:
+0mu"
+label_settings = SubResource("LabelSettings_rtfvk")
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="contents" type="Node2D" parent="texture"]
-position = Vector2(20, 14)
+position = Vector2(20, 13.6)

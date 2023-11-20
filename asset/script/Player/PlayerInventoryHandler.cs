@@ -14,24 +14,24 @@ public partial class PlayerInventoryHandler : Node
 
     public const int MaxMilkUnitsCarriable = 20;
 
-	private List<EnumItem> _carriedItems;
+	private List<(float damage, EnumItem item)> _carriedItems;
 	private int _carriedWeight;
 
 	public override void _Ready()
 	{
-		_carriedItems = new List<EnumItem>();
+		_carriedItems = new List<(float damage, EnumItem item)>();
 	}
 
-	public bool CheckWeightAndAddItem(EnumItem item)
+	public bool CheckWeightAndAddItem(EnumItem item, int count = 1, float damage = 1)
 	{
 		int weight = GetByEnum(item).MilkUnitWeight;
 
-		if (_carriedWeight + weight <= MaxMilkUnitsCarriable)
+		if (_carriedWeight + (weight * count) <= MaxMilkUnitsCarriable)
 		{
-			_carriedItems.Add(item);
-			_carriedWeight += weight;
+			for (int i = 0; i < count; i++) _carriedItems.Add((damage, item));
+			_carriedWeight += weight * count;
 
-			$"Added: {item}; Weight now: {_carriedWeight}".Test();
+			$"Added: {item} x {count}; Weight now: {_carriedWeight}".Test();
 
 			EmitSignal(SignalName.InventoryUpdated);
 
@@ -40,20 +40,44 @@ public partial class PlayerInventoryHandler : Node
 		else return false;
 	}
 
-	public bool RemoveItemOfType(EnumItem item)
+	public bool RemoveItemOfType(EnumItem item, int count = 1)
 	{
-		var v = _carriedItems.Remove(item);
-        EmitSignal(SignalName.InventoryUpdated);
-        if (v)
+		bool removed = false;
+		int realRemoved = 0;
+		for (int i = 0; i < count; i++)
 		{
-			_carriedWeight -= GetByEnum(item).MilkUnitWeight;
+			bool v = false;
+			float dmg = 0;
+			foreach (var e in _carriedItems)
+			{
+				if (e.item == item)
+				{
+					v = true;
+					dmg = e.damage;
+					break;
+				}
+			}
+			if (v)
+			{
+				_carriedItems.Remove((dmg, item));
+			}
+
+
+			EmitSignal(SignalName.InventoryUpdated);
+			if (v)
+			{
+				realRemoved += 1;
+				_carriedWeight -= GetByEnum(item).MilkUnitWeight;
+            }
+			if (!removed && v) removed = true;
 		}
-		return v;
+        $"Removed: {item} x {realRemoved}; Weight now: {_carriedWeight}".Test();
+        return removed;
 	}
 
-	public Dictionary<EnumItem, int> GetCarriedItemsWithCount()
+	public Dictionary<(float damage, EnumItem item), int> GetCarriedItemsWithCount()
 	{
-		var dict = new Dictionary<EnumItem, int>();
+		var dict = new Dictionary<(float damage, EnumItem item), int>();
 		foreach (var item in _carriedItems)
 		{
 			if (dict.ContainsKey(item))
@@ -66,4 +90,6 @@ public partial class PlayerInventoryHandler : Node
 		}
 		return dict;
 	}
+
+	public int GetWeight() => _carriedWeight;
 }

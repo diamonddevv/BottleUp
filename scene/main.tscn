@@ -1,10 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://bn63bkq883adu"]
+[gd_scene load_steps=5 format=3 uid="uid://bn63bkq883adu"]
 
 [ext_resource type="PackedScene" uid="uid://bmsja7y4omkjr" path="res://asset/prefab/player.tscn" id="1_cj3hu"]
+[ext_resource type="Script" path="res://asset/script/Game/MainGameManager.cs" id="1_dwsvn"]
 [ext_resource type="PackedScene" uid="uid://c0gnnuv46qov1" path="res://asset/ui/hud.tscn" id="1_l1ahy"]
 [ext_resource type="PackedScene" uid="uid://c4yvit5cxiucl" path="res://asset/prefab/map.tscn" id="1_rsrif"]
 
-[node name="main" type="Node"]
+[node name="main" type="Node" node_paths=PackedStringArray("GameTimer", "Map")]
+script = ExtResource("1_dwsvn")
+GameTimer = NodePath("gameTimer")
+Map = NodePath("Map")
+GameSeconds = 300.0
 
 [node name="Map" parent="." instance=ExtResource("1_rsrif")]
 Player = NodePath("../player")
@@ -19,3 +24,6 @@ Camera = NodePath("../playerCamera")
 [node name="hud" parent="." instance=ExtResource("1_l1ahy")]
 Player = NodePath("../player")
 MapScene = ExtResource("1_rsrif")
+InGameTimer = NodePath("../gameTimer")
+
+[node name="gameTimer" type="Timer" parent="."]
