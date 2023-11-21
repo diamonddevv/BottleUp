@@ -8,7 +8,26 @@ using static BottleUp.asset.script.Util.BottleUpHelper;
 
 public partial class Poi : StaticBody2D
 {
-	[Export] public PoiType PointOfInterestType { get; set; } = PoiType.Destination;
+	private PoiType _poiType = PoiType.Destination;
+
+    [Export] public PoiType PointOfInterestType 
+	{
+		get => _poiType;
+		set
+		{
+			_poiType = value;
+			
+			if (_poiType == PoiType.Depot)
+			{
+				_destSprites.Hide();
+				_depotSprite.Show();
+			} else if (_poiType == PoiType.Destination)
+			{
+				_destSprites.Show();
+				_depotSprite.Hide();
+			}
+		}
+	} 
 	[Export] public NodePath Map { get; set; }
 
 
@@ -17,7 +36,9 @@ public partial class Poi : StaticBody2D
 
 
     private float _sqrDistToPlayer;
-	private Sprite2D _sprite;
+	private Sprite2D _destSprites;
+	private Sprite2D _depotSprite;
+	private Node2D _entrance;
 	private Map _map;
 	private Player _player;
 
@@ -25,9 +46,11 @@ public partial class Poi : StaticBody2D
 	
 	public override void _Ready()
 	{
-		_sprite = GetNode<Sprite2D>("sprite");
+		_destSprites = GetNode<Sprite2D>("destSprite");
+		//_depotSprite = GetNode<Sprite2D>("depotSprite");
+		_entrance = GetNode<Node2D>("entrance");
 		_map = GetNode<Map>(Map);
-	}
+    }
 
     public override void _Process(double delta)
 	{
@@ -38,7 +61,7 @@ public partial class Poi : StaticBody2D
 		else
 		{
 			// Update Player Distance
-			_sqrDistToPlayer = (Position * _map.Scale).DistanceSquaredTo(_player.Position);
+			_sqrDistToPlayer = ((Position + _entrance.Position) * _map.Scale).DistanceSquaredTo(_player.Position);
 		}
 
 		if (PointOfInterestType == PoiType.Depot) DoDepotPoiProcess(delta);
@@ -61,6 +84,7 @@ public partial class Poi : StaticBody2D
     {
         if (CheckInteraction())
         {
+			"asd".Test();
 			// Open Depot UI
         }
     }

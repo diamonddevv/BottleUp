@@ -8,6 +8,7 @@ using System.Security.AccessControl;
 public partial class StackedSprite : Sprite2D
 {
     private bool _showSprites = true;
+    private float _separate = 1;
     private float _displayRotation = 0;
     [Export] public bool ShowSprites
     {
@@ -15,12 +16,20 @@ public partial class StackedSprite : Sprite2D
         set => SetShowSprites(value);
     }
 
-    [Export] public float DisplayRotation
+    [Export(PropertyHint.Range, "0,10,0.1")] public float Separate
+    {
+        get => _separate;
+        set {
+            _separate = value;
+            DrawSprites();
+        }
+    }
+
+    [Export(PropertyHint.Range, "0,360,0.1")] public float DisplayRotation
     {
         get => _displayRotation;
         set => SetDispRotation(value);
     }
-
 
     public override void _Ready()
 	{
@@ -58,13 +67,15 @@ public partial class StackedSprite : Sprite2D
             next.Texture = Texture;
             next.Hframes = Hframes;
             next.Frame = i;
-            next.Position = new Vector2(0, -i);
+            next.Position = new Vector2(0, -i * Separate);
 
             AddChild(next);
         }
 
         RegionEnabled = true;
         RegionRect = new Rect2(0, 0, 0, 0); // hide the base sprite
+
+        SetRotation(DisplayRotation);
     }
 
     private void ClearSprites()
@@ -74,8 +85,12 @@ public partial class StackedSprite : Sprite2D
 
     public void SetRotation(float degs)
     {
-        var v = (GetParent() as Node2D).Rotation;
-        Rotation = -v;
+        if (GetParent() is Node2D n)
+        {
+            var v = n.Rotation;
+            Rotation = -v;
+        }
+
         foreach (Sprite2D c in GetChildren()) c.RotationDegrees = degs;
     }
 }
