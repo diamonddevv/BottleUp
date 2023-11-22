@@ -58,7 +58,7 @@ public partial class StackedSprite : Sprite2D
     }
 
 
-    private void DrawSprites()
+    public void DrawSprites()
     {
         ClearSprites();
         for (int i = 0; i < Hframes; i++)

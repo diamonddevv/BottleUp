@@ -1,7 +1,10 @@
 using BottleUp.asset.script.Util;
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using static BottleUp.asset.script.Util.BottleUpHelper;
+using static MainGameManager;
 
 public partial class Player : CharacterBody2D
 {
@@ -68,8 +71,10 @@ public partial class Player : CharacterBody2D
 	private bool _mapTransitionState;
 	private bool _isFullMap;
 	private Vector2 _fullMapTargetPos;
+    private List<DeliveryRequest> _completedDeliveries;
+    private Rating _rating;
 
-	public override void _Ready()
+    public override void _Ready()
 	{
 		_camera = GetNode<Camera2D>(Camera);
 
@@ -105,6 +110,9 @@ public partial class Player : CharacterBody2D
 				}
 			}
 		};
+
+
+		_completedDeliveries = new List<DeliveryRequest>();
 	}
 
 	
@@ -234,9 +242,15 @@ public partial class Player : CharacterBody2D
 
 	#endregion
 
-	#region Getters
+	#region Getters/Setters
 	public bool GetIsInteracting() => _interactInputTick && !_lastInteractInputTick;
 	public PlayerInventoryHandler GetInventory() => _inventory;
+
+	public List<DeliveryRequest> GetCompletedDeliveries() => _completedDeliveries;
+	public Rating GetRating() => _rating;
+
+
+	public void SetRating(Rating rating) => _rating = rating;
 	#endregion
 
 }

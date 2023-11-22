@@ -1,6 +1,7 @@
 using BottleUp.asset.script.Util;
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public partial class Map : TileMap
 {
@@ -11,16 +12,24 @@ public partial class Map : TileMap
 
 
     private Player _player;
+	private List<Poi> _destinations;
+	private Poi _depot;
 
 	public override void _Ready()
 	{
+		_destinations = new List<Poi>();
+
 		if (Player != null) _player = GetNode<Player>(Player);
 
 		foreach (var child in GetChildren())
 		{
 			if (child is Poi poi)
 			{
+				if (poi.PointOfInterestType == Poi.PoiType.Destination) _destinations.Add(poi);
+				if (poi.PointOfInterestType == Poi.PoiType.Depot) _depot = poi; // there should only be one depot
+
 				poi.PoiDeliveryMade += () => EmitSignal(SignalName.DeliveryMade, poi);
+				poi.SetPoiSprites();
 			}
 		}
 	}
@@ -31,4 +40,6 @@ public partial class Map : TileMap
 	}
 
 	public Player GetPlayer() => _player;
+	public List<Poi> GetDestinations() => _destinations;
+	public Poi GetDepot() => _depot;
 }

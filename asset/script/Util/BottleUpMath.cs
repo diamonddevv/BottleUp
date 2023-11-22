@@ -1,7 +1,9 @@
 ﻿using Godot;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,5 +31,8 @@ namespace BottleUp.asset.script.Util
         public static Vector2 Multiply(this Vector2 vec, float coef) => new Vector2(vec.X * coef, vec.Y * coef);
 
         public static Vector2I RoundInts(this Vector2 vec) => new Vector2I(Mathf.RoundToInt(vec.X), Mathf.RoundToInt(vec.Y));
+
+        public static bool Chance(this Random random, float chance) => random.NextDouble() <= chance;
+        public static T RandomElement<T>(this Random random, List<T> list) => list[random.Next(list.Count)];
     }
 }

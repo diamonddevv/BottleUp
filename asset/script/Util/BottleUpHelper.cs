@@ -23,17 +23,24 @@ namespace BottleUp.asset.script.Util
         {
             double mins = Math.Floor(secs / 60);
             double secsAfterMins = Math.Floor(secs % 60);
-            return $"{mins}:{secsAfterMins}";
+
+            string s = "";
+            if (secsAfterMins < 10) s = $"0{secsAfterMins}";
+            else s = $"{secsAfterMins}";
+
+            return $"{mins}:{s}";
         }
+
+        public static double GetFramerate() => Engine.GetFramesPerSecond();
 
         public static bool IsBitSet(this byte b, int index) => (b & (1 << index)) != 0;
 
         public struct Rating
         {
-            public float Percentage;
+            public double Percentage;
             public int StarCount;
 
-            public float GetStarCount() => Percentage / StarCount;
+            public double GetStarCount() => Percentage / StarCount;
         }
     }
 }

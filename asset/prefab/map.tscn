@@ -902,7 +902,7 @@ z_index = 8
 position = Vector2(-396.6, -551)
 Map = NodePath("..")
 
-[node name="po20" parent="." instance=ExtResource("2_bl042")]
+[node name="poi20" parent="." instance=ExtResource("2_bl042")]
 z_index = 8
 position = Vector2(-337.8, 501.2)
 Map = NodePath("..")

@@ -1,6 +1,9 @@
+using BottleUp.asset.script.Game;
+using BottleUp.asset.script.Util;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using static BottleUp.asset.script.Game.DeliverableItems;
 using static BottleUp.asset.script.Util.BottleUpHelper;
 
@@ -9,22 +12,25 @@ public partial class MainGameManager : Node
 	[ExportCategory("Components")]
 	[Export] public Timer GameTimer;
 	[Export] public Map Map;
+	[Export] public Player Player;
 
 	[ExportCategory("Settings")]
 	[Export] public double GameSeconds;
+    [Export] public int MaxRequests = 8;
 
+
+    private Random random;
 	private bool _started = false;
-    private List<DeliveryRequest> _completedDeliveries;
-	private Rating _rating;
-
+    private Dictionary<Poi, DeliveryRequest> _activeRequests = new Dictionary<Poi, DeliveryRequest>();
 
     public override void _Ready()
     {
+        random = new Random();
 
         Map.DeliveryMade += (poi) =>
         {
             var v = poi.GetDelivery();
-            _completedDeliveries.Add(v);
+            Player.GetCompletedDeliveries().Add(v);
         };
 
 		Start();
@@ -35,7 +41,19 @@ public partial class MainGameManager : Node
 	{
 		if (_started)
 		{
+            // Add Requests
+            if (_activeRequests.Count < MaxRequests)
+            {
+                if (random.Chance(1f/50f))
+                {
+                    // Add a Request
+                    var dest = random.RandomElement(Map.GetDestinations().FindAll((poi) => !_activeRequests.ContainsKey(poi))); // gives a random poi without a request already present
 
+                    DeliveryRequest req = DeliveryRequest.WithRandomFields(random, GameTimer);
+
+                    _activeRequests.Add(dest, req);
+                }
+            }
 		}
 	}
 
@@ -51,25 +69,25 @@ public partial class MainGameManager : Node
     {
 		_started = false;
 
-        float avgRating = 0;
+        double avgRating = 0;
 
-        foreach (var v in _completedDeliveries) avgRating += v.Average.Percentage;
-        avgRating /= _completedDeliveries.Count;
+        foreach (var v in Player.GetCompletedDeliveries()) avgRating += v.Average.Percentage;
+        avgRating /= Player.GetCompletedDeliveries().Count;
 
-        _rating = new Rating()
+        Player.SetRating(new Rating()
         {
             StarCount = 5,
             Percentage = avgRating
-        };
+        });
 
         // change to finish screen
     }
 
     public struct DeliveryRequest
     {
-        public CountedItem[] Items;
+        public List<CountedItem> Items;
         public PrioritySpeed Priority;
-        public float DispatchTime;
+        public double DispatchTime;
 
         public bool Made;
 
@@ -78,9 +96,9 @@ public partial class MainGameManager : Node
         public Rating Quantity;
         public Rating Speed;
 
-        public void SetRatings(float deliveryTime, CountedItem[] delivered)
+        public void SetRatings(float deliveryTime, List<CountedItem> delivered)
         {
-            float speed = deliveryTime - DispatchTime;
+            double speed = deliveryTime - DispatchTime;
             float averageItemIntactness = 0;
             float desiredCount = 0;
             float totalCount = 0;
@@ -96,7 +114,7 @@ public partial class MainGameManager : Node
                 desiredCount += item.count;
             }
 
-            averageItemIntactness /= delivered.Length;
+            averageItemIntactness /= delivered.Count;
 
 
             Speed = new Rating()
@@ -119,10 +137,9 @@ public partial class MainGameManager : Node
 
             CalculateAverage();
         }
-
         public void CalculateAverage()
         {
-            float a = 0;
+            double a = 0;
 
             a += MilkIntactness.Percentage;
             a += Quantity.Percentage;
@@ -136,7 +153,32 @@ public partial class MainGameManager : Node
                 Percentage = a
             };
         }
+
+
+        public static DeliveryRequest WithRandomFields(Random random, Timer timer, int maxItems = 1)
+        {
+            var req = new DeliveryRequest();
+
+            int items = maxItems > 1 ? random.Next(maxItems) + 1 : 1;
+            req.Items = new List<CountedItem>();
+            for (int i = 0; i < items; i++)
+            {
+                var item = new CountedItem();
+                item.item = RandomItem(random);
+                item.count = random.Next(GetByEnum(item.item).MaxDeliverable) + 1;
+                item.intactness = 1;
+                req.Items.Add(item);
+            }
+
+            req.Priority = random.RandomElement(PrioritySpeed.PRIORITY_SPEEDS);
+            req.DispatchTime = timer.TimeLeft;
+            req.Made = false;
+
+            return req;
+        }
     }
+
+    public Dictionary<Poi, DeliveryRequest> GetActiveRequests() => _activeRequests;
 
     public struct CountedItem
     {
@@ -144,14 +186,15 @@ public partial class MainGameManager : Node
         public int count;
         public float intactness;
     }
-
     public struct PrioritySpeed
     {
+        public static readonly List<PrioritySpeed> PRIORITY_SPEEDS = new List<PrioritySpeed>() { LOW, MID, HIGH };
+
         public static readonly PrioritySpeed LOW = new() { Time = 120, Name = "Low Priority", Color = 0x3bba00 };
         public static readonly PrioritySpeed MID = new() { Time = 60, Name = "Medium Priority", Color = 0xfcf33d };
         public static readonly PrioritySpeed HIGH = new() { Time = 30, Name = "High Priority", Color = 0xcf0404 };
 
-        public float Time;
+        public double Time;
         public string Name;
         public int Color;
     }

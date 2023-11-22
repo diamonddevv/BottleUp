@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BottleUp.asset.script.Game
 {
-    public class DeliverableItems
+    public static class DeliverableItems
     {
         public enum EnumItem
         {
@@ -26,11 +26,14 @@ namespace BottleUp.asset.script.Game
         }
 
         public static Item GetByEnum(EnumItem item) => Items[(int)item];
+        public static EnumItem RandomItem(Random random) => (EnumItem)random.Next(11);
 
         public struct Item
         {
             public string Name;
             public string Description;
+
+            public int MaxDeliverable;
 
             public bool IsMilkBottle;
             public Vector4 MilkColor;
@@ -46,6 +49,8 @@ namespace BottleUp.asset.script.Game
                 Name = "Cow Milk",
                 Description = "Your standard, run-of-the-mill Cow's milk.",
 
+                MaxDeliverable = 15,
+
                 IsMilkBottle = true,
                 MilkColor = new Vector4(.8f,.8f,.8f,1),
                 TextureIndex = 0,
@@ -56,6 +61,8 @@ namespace BottleUp.asset.script.Game
             {
                 Name = "Strawberry Milk",
                 Description = "Cow's milk, but fruitier!",
+
+                MaxDeliverable = 8,
 
                 IsMilkBottle = true,
                 MilkColor = new Vector4(1f,.75f,.78f,1),
@@ -68,6 +75,8 @@ namespace BottleUp.asset.script.Game
                 Name = "Banana Milk",
                 Description = "Fit for a minion!",
 
+                MaxDeliverable = 8,
+
                 IsMilkBottle = true,
                 MilkColor = new Vector4(.89f,.83f,.58f,1),
                 TextureIndex = 2,
@@ -78,6 +87,8 @@ namespace BottleUp.asset.script.Game
             {
                 Name = "Chocolate Milk",
                 Description = "CHOCCY MILK!!",
+
+                MaxDeliverable = 8,
 
                 IsMilkBottle = true,
                 MilkColor = new Vector4(.32f,.25f,.21f,1),
@@ -90,6 +101,8 @@ namespace BottleUp.asset.script.Game
                 Name = "Coconut Milk",
                 Description = "The coconut nut is a giant nut, but this delicious nut is not a nut.",
 
+                MaxDeliverable = 5,
+
                 IsMilkBottle = true,
                 MilkColor = new Vector4(.9f,.9f,.9f,1),
                 TextureIndex = 4,
@@ -100,6 +113,8 @@ namespace BottleUp.asset.script.Game
             {
                 Name = "Oat Milk",
                 Description = "Imagine being lactose intolerant.",
+
+                MaxDeliverable = 5,
 
                 IsMilkBottle = true,
                 MilkColor = new Vector4(.95f,.95f,.95f,1),
@@ -112,6 +127,8 @@ namespace BottleUp.asset.script.Game
                 Name = "Almond Milk",
                 Description = "How do you milk an almond..?",
 
+                MaxDeliverable = 5,
+
                 IsMilkBottle = true,
                 MilkColor = new Vector4(.98f,.89f,.82f,1),
                 TextureIndex = 6,
@@ -122,6 +139,8 @@ namespace BottleUp.asset.script.Game
             {
                 Name = "Soya Milk",
                 Description = "Milk minus Cow.",
+
+                MaxDeliverable = 5,
 
                 IsMilkBottle = true,
                 MilkColor = new Vector4(1,1,1,1),
@@ -134,6 +153,8 @@ namespace BottleUp.asset.script.Game
                 Name = "Cheese",
                 Description = "Ye olde bacterial milk.",
 
+                MaxDeliverable = 3,
+
                 IsMilkBottle = false,
                 TextureIndex = 8,
 
@@ -143,6 +164,8 @@ namespace BottleUp.asset.script.Game
             {
                 Name = "Cream",
                 Description = "Milk minus.. most of the milk. It's part of it, I suppose.",
+
+                MaxDeliverable = 3,
 
                 IsMilkBottle = false,
                 TextureIndex = 9,
@@ -154,6 +177,8 @@ namespace BottleUp.asset.script.Game
                 Name = "Butter",
                 Description = "Milk in solid form. Pretty much.",
 
+                MaxDeliverable = 3,
+
                 IsMilkBottle = false,
                 TextureIndex = 10,
 
@@ -163,6 +188,8 @@ namespace BottleUp.asset.script.Game
             {
                 Name = "Cow",
                 Description = "\"What do you mean you want the ENTIRE cow??\"",
+
+                MaxDeliverable = 1,
 
                 IsMilkBottle = false,
                 TextureIndex = 11,

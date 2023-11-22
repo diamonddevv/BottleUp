@@ -13,13 +13,17 @@ public partial class HUD : CanvasLayer
 	[Export] public PackedScene MapScene;
 
 	[ExportCategory("Misc.")]
+	[Export] public MainGameManager GameManager;
 	[Export] public NodePath InGameTimer;
+	[Export] public bool DisplayFPS = false;
 
 
     //
     private CanvasLayer _pauseOverlay;
     private Minimap _minimap;
     private Label _timerLabel;
+    private Label _fpsLabel;
+    private Label _reqsLabel;
     private Timer _timer;
     private Player _player;
     private PackedScene _mapScene;
@@ -33,12 +37,15 @@ public partial class HUD : CanvasLayer
 		_pauseOverlay = GetNode<CanvasLayer>("pause");
 		_minimap = GetNode<Minimap>("ingame/margin/minimap");
         _timerLabel = GetNode<Label>("ingame/timer");
+        _fpsLabel = GetNode<Label>("ingame/fps");
+		_reqsLabel = GetNode<Label>("ingame/reqs");
 
 		_timer = GetNode<Timer>(InGameTimer);
 		_player = GetNode<Player>(Player);
 
 		_minimap.SetMapScene(MapScene);
 		_minimap.SetPlayer(_player);
+		_minimap.GameManager = GameManager;
 	}
 
 	
@@ -48,6 +55,11 @@ public partial class HUD : CanvasLayer
 		CheckPause();
 
 		if (_timer != null) _timerLabel.Text = BottleUpHelper.FormatTime(_timer.TimeLeft);
+
+		_fpsLabel.Visible = DisplayFPS;
+		if (DisplayFPS) _fpsLabel.Text = $"FPS: {BottleUpHelper.GetFramerate()}";
+
+        _reqsLabel.Text = $"Unfulfilled Deliveries: {GameManager.GetActiveRequests().Count}\nCompleted Deliveries: {_player.GetCompletedDeliveries().Count}";
 
         GetTree().Paused = _isPaused;
         PauseTick(delta);

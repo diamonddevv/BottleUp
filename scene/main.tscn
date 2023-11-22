@@ -21,9 +21,10 @@ position = Vector2(1360, -49)
 position = Vector2(555, 3578)
 Camera = NodePath("../playerCamera")
 
-[node name="hud" parent="." instance=ExtResource("1_l1ahy")]
+[node name="hud" parent="." node_paths=PackedStringArray("GameManager") instance=ExtResource("1_l1ahy")]
 Player = NodePath("../player")
 MapScene = ExtResource("1_rsrif")
+GameManager = NodePath("..")
 InGameTimer = NodePath("../gameTimer")
 
 [node name="gameTimer" type="Timer" parent="."]

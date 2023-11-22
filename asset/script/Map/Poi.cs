@@ -16,28 +16,21 @@ public partial class Poi : StaticBody2D
 		set
 		{
 			_poiType = value;
-			
-			if (_poiType == PoiType.Depot)
-			{
-				_destSprites.Hide();
-				_depotSprite.Show();
-			} else if (_poiType == PoiType.Destination)
-			{
-				_destSprites.Show();
-				_depotSprite.Hide();
-			}
+			SetPoiSprites();
 		}
 	} 
 	[Export] public NodePath Map { get; set; }
 
+
+    [Export] public Texture2D HouseSpritestacks;
+    [Export] public Texture2D DepotSpritestacks;
 
     [Signal]
     public delegate void PoiDeliveryMadeEventHandler();
 
 
     private float _sqrDistToPlayer;
-	private Sprite2D _destSprites;
-	private Sprite2D _depotSprite;
+	private StackedSprite _sprite;
 	private Node2D _entrance;
 	private Map _map;
 	private Player _player;
@@ -46,30 +39,30 @@ public partial class Poi : StaticBody2D
 	
 	public override void _Ready()
 	{
-		_destSprites = GetNode<Sprite2D>("destSprite");
-		//_depotSprite = GetNode<Sprite2D>("depotSprite");
+		_sprite = GetNode<StackedSprite>("sprite");
 		_entrance = GetNode<Node2D>("entrance");
 		_map = GetNode<Map>(Map);
     }
 
     public override void _Process(double delta)
 	{
-		if (_player == null)
-		{
-			_player = _map.GetPlayer();
-		}
-		else
-		{
-			// Update Player Distance
-			_sqrDistToPlayer = ((Position + _entrance.Position) * _map.Scale).DistanceSquaredTo(_player.Position);
-		}
+        if (_player == null)
+        {
+            _player = _map.GetPlayer();
+        }
+        else
+        {
+            // Update Player Distance
+            _sqrDistToPlayer = ((Position + _entrance.Position) * _map.Scale).DistanceSquaredTo(_player.Position);
+        }
 
-		if (PointOfInterestType == PoiType.Depot) DoDepotPoiProcess(delta);
-		if (PointOfInterestType == PoiType.Destination) DoDestPoiProcess(delta);
+        if (PointOfInterestType == PoiType.Depot) DoDepotPoiProcess(delta);
+        if (PointOfInterestType == PoiType.Destination) DoDestPoiProcess(delta);
 	}
 
 	public bool CheckInteraction()
 	{
+        if (float.IsNaN(_sqrDistToPlayer)) return false;
         if (_sqrDistToPlayer <= _player.SquareInteractDistanceThreshold)
         {
             if (_player.GetIsInteracting())
@@ -97,6 +90,26 @@ public partial class Poi : StaticBody2D
 			EmitSignal(SignalName.PoiDeliveryMade);
 
 			_delivery.Made = true;
+        }
+    }
+
+	public void SetPoiSprites()
+	{
+        if (_sprite != null && HouseSpritestacks != null && DepotSpritestacks != null)
+        {
+            if (PointOfInterestType == PoiType.Depot)
+            {
+                _sprite.Texture = DepotSpritestacks;
+                _sprite.Hframes = 9;
+            }
+
+            if (PointOfInterestType == PoiType.Destination)
+            {
+                _sprite.Texture = HouseSpritestacks;
+                _sprite.Hframes = 8;
+            }
+
+            _sprite.DrawSprites();
         }
     }
 

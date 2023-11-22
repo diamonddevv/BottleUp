@@ -3,6 +3,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 [Tool]
 public partial class Minimap : Control
@@ -23,6 +24,8 @@ public partial class Minimap : Control
 
     [Export] public NodePath Depot;
     [Export] public NodePath Destination;
+
+	public MainGameManager GameManager { get; set; }
 
     private SubViewportContainer _container;
     private TextureRect _frame;
@@ -124,14 +127,19 @@ public partial class Minimap : Control
 			{
 				foreach (var t in _destinations)
 				{
-					t.icon.Position = t.pos;
-					t.icon.Rotation = (RotateEverything ? 1 : 0) * _player.Rotation;
+					t.icon.Visible = GameManager.GetActiveRequests().Any(kvp => kvp.Key.Position == t.pos);
 
-					var dist = _playerIcon.Position.DistanceSquaredTo(t.pos * scale);
-					if (float.IsNaN(closestDestDist) || dist < closestDestDist)
+					if (t.icon.Visible)
 					{
-						closestDest = t;
-						closestDestDist = dist;
+						t.icon.Position = t.pos;
+						t.icon.Rotation = (RotateEverything ? 1 : 0) * _player.Rotation;
+
+						var dist = _playerIcon.Position.DistanceSquaredTo(t.pos * scale);
+						if (float.IsNaN(closestDestDist) || dist < closestDestDist)
+						{
+							closestDest = t;
+							closestDestDist = dist;
+						}
 					}
 				}
 			}
