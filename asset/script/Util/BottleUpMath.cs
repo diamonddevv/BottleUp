@@ -29,10 +29,15 @@ namespace BottleUp.asset.script.Util
 
         public static Vector2 Multiply(this Vector2 vec, float xCoef, float yCoef) => new Vector2(vec.X * xCoef, vec.Y * yCoef);
         public static Vector2 Multiply(this Vector2 vec, float coef) => new Vector2(vec.X * coef, vec.Y * coef);
+        
+        public static Vector2 Add(this Vector2 vec, float xCoef, float yCoef) => new Vector2(vec.X + xCoef, vec.Y + yCoef);
+        public static Vector2 Add(this Vector2 vec, float coef) => new Vector2(vec.X + coef, vec.Y + coef);
 
         public static Vector2I RoundInts(this Vector2 vec) => new Vector2I(Mathf.RoundToInt(vec.X), Mathf.RoundToInt(vec.Y));
 
         public static bool Chance(this Random random, float chance) => random.NextDouble() <= chance;
+        public static bool IsOfPercentageThreshold(float value, float max, float percentage) => value / max >= percentage;
+
         public static T RandomElement<T>(this Random random, List<T> list) => list[random.Next(list.Count)];
     }
 }

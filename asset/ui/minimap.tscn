@@ -1,9 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://bqeq8xrs1ycit"]
+[gd_scene load_steps=17 format=3 uid="uid://bqeq8xrs1ycit"]
 
 [ext_resource type="Script" path="res://asset/script/GUI/Minimap.cs" id="1_00k54"]
 [ext_resource type="Texture2D" uid="uid://n7j0sng53oi6" path="res://asset/texture/ui/minimap_frame.png" id="2_gce4b"]
 [ext_resource type="Texture2D" uid="uid://btlmb2t8ede7a" path="res://asset/texture/ui/minimap_icons.png" id="2_lar3h"]
 [ext_resource type="Theme" uid="uid://y255ykpkjam0" path="res://asset/font/PixellariFontTheme.tres" id="4_cwfpb"]
+[ext_resource type="LabelSettings" uid="uid://swbyh6dnefyb" path="res://asset/font/PixellariLabelSettings.tres" id="5_p48t4"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pgtnf"]
 atlas = ExtResource("2_lar3h")
@@ -13,9 +14,44 @@ region = Rect2(0, 0, 16, 16)
 atlas = ExtResource("2_lar3h")
 region = Rect2(32, 0, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_4mshq"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_nln30"]
 atlas = ExtResource("2_lar3h")
 region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0em4g"]
+atlas = ExtResource("2_lar3h")
+region = Rect2(0, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4pbqt"]
+atlas = ExtResource("2_lar3h")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4pe7t"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nln30")
+}],
+"loop": true,
+"name": &"req",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0em4g")
+}],
+"loop": true,
+"name": &"sel",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4pbqt")
+}],
+"loop": true,
+"name": &"unreq",
+"speed": 5.0
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w0wc0"]
 atlas = ExtResource("2_lar3h")
@@ -32,10 +68,6 @@ region = Rect2(32, 16, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_1b5hi"]
 atlas = ExtResource("2_lar3h")
 region = Rect2(48, 16, 16, 16)
-
-[sub_resource type="LabelSettings" id="LabelSettings_jugr0"]
-outline_size = 8
-outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_aag84"]
 atlas = ExtResource("2_lar3h")
@@ -89,9 +121,10 @@ texture = SubResource("AtlasTexture_pgtnf")
 visible = false
 texture = SubResource("AtlasTexture_t3i8p")
 
-[node name="destination" type="Sprite2D" parent="container/view"]
+[node name="destination" type="AnimatedSprite2D" parent="container/view"]
 visible = false
-texture = SubResource("AtlasTexture_4mshq")
+sprite_frames = SubResource("SpriteFrames_4pe7t")
+animation = &"sel"
 
 [node name="frame" type="TextureRect" parent="container"]
 custom_minimum_size = Vector2(250, 250)
@@ -126,7 +159,7 @@ offset_bottom = 188.0
 theme = ExtResource("4_cwfpb")
 text = "Closest Destination:
 123m"
-label_settings = SubResource("LabelSettings_jugr0")
+label_settings = ExtResource("5_p48t4")
 horizontal_alignment = 1
 vertical_alignment = 1
 

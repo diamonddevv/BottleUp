@@ -2,6 +2,7 @@ using BottleUp.asset.script.Util;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 public partial class Map : TileMap
 {
@@ -9,6 +10,9 @@ public partial class Map : TileMap
 
     [Signal]
     public delegate void DeliveryMadeEventHandler(Poi pointOfInterest);
+
+    [Signal]
+    public delegate void DepotInteractedEventHandler(Poi depot);
 
 
     private Player _player;
@@ -29,6 +33,7 @@ public partial class Map : TileMap
 				if (poi.PointOfInterestType == Poi.PoiType.Depot) _depot = poi; // there should only be one depot
 
 				poi.PoiDeliveryMade += () => EmitSignal(SignalName.DeliveryMade, poi);
+				poi.PoiDepotInteracted += () => EmitSignal(SignalName.DepotInteracted, poi);
 				poi.SetPoiSprites();
 			}
 		}

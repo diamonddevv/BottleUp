@@ -30,7 +30,7 @@ public partial class Player : CharacterBody2D
 	[Export] public float Friction { get; set; } = 1.005f;
 	[Export] public float GrassFriction { get; set; } = 1.15f;
 	[Export] public float CameraSlide { get; set; } = 18f;
-	[Export] public float SquareInteractDistanceThreshold { get; set; } = 8e3f;
+	[Export] public float SquareArbMeterInteractDistanceThreshold { get; set; } = 5f;
 
 	[ExportCategory("Misc")]
 	[Export] public Vector2 DefaultCameraZoomFactor = new Vector2(4, 4);
@@ -39,10 +39,8 @@ public partial class Player : CharacterBody2D
 	[Export] public Vector2 FullmapTargetPos = new Vector2(0, -1000f);
 
     [ExportCategory("Other Nodes")]
-	[Export] public NodePath Camera;
-
-	// other nodes
-	private Camera2D _camera;
+	[Export] public Camera2D Camera;
+	[Export] public HUD Hud;
 
 	// children
 	private StackedSprite _sprite;
@@ -73,10 +71,10 @@ public partial class Player : CharacterBody2D
 	private Vector2 _fullMapTargetPos;
     private List<DeliveryRequest> _completedDeliveries;
     private Rating _rating;
+	private Dictionary<Poi, bool> _interactables;
 
     public override void _Ready()
 	{
-		_camera = GetNode<Camera2D>(Camera);
 
 		_sprite = GetNode<StackedSprite>("sprite");
 		_grassCollider = GetNode<Area2D>("grassCollider");
@@ -85,7 +83,7 @@ public partial class Player : CharacterBody2D
 		_maxCameraSlideVec = BottleUpMath.Uniform(CameraSlide);
 
 
-		_camera.Zoom = DefaultCameraZoomFactor;
+        Camera.Zoom = DefaultCameraZoomFactor;
 
         // Add GrassCollider Properties
         _grassCollider.BodyEntered += (body) =>
@@ -111,8 +109,8 @@ public partial class Player : CharacterBody2D
 			}
 		};
 
-
-		_completedDeliveries = new List<DeliveryRequest>();
+        _interactables = new Dictionary<Poi, bool>();
+        _completedDeliveries = new List<DeliveryRequest>();
 	}
 
 	
@@ -127,8 +125,8 @@ public partial class Player : CharacterBody2D
 		ApplyMovement(delta);
 
 		_cameraSlide = Position + (BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * BottleUpMath.Lerp(0, CameraSlide, _speed / MaxSpeed));
-		if (!_isFullMap) _camera.Position = _cameraSlide;
-		else _camera.Position = _fullMapTargetPos;
+		if (!_isFullMap) Camera.Position = _cameraSlide;
+		else Camera.Position = _fullMapTargetPos;
 
 		if (_fullmapInputTick && !_lastFullmapInputTick)
 		{
@@ -143,7 +141,7 @@ public partial class Player : CharacterBody2D
 			var newPos = _isFullMap ? FullmapTargetPos : Position;
 			var weight = Mathf.Clamp(_mapTransitionTime / FullMapTimeToTransition, 0, 1);
 
-            _camera.Zoom = _camera.Zoom.Lerp(_isFullMap ? FullMapZoomFactor : DefaultCameraZoomFactor, weight);
+            Camera.Zoom = Camera.Zoom.Lerp(_isFullMap ? FullMapZoomFactor : DefaultCameraZoomFactor, weight);
 			_fullMapTargetPos = pos.Lerp(newPos, weight);
 
             _mapTransitionTime += (float)delta;
@@ -171,17 +169,23 @@ public partial class Player : CharacterBody2D
 		_interactInputTick = false;
 		_fullmapInputTick = false;
 
-		if (Input.IsKeyPressed(Accelerate)) _accelInputTick += 1;
-		if (Input.IsKeyPressed(Brake)) _accelInputTick -= 1;
 
-		if (Input.IsKeyPressed(LeftTurn)) _turnInputTick += 1;
-		if (Input.IsKeyPressed(RightTurn)) _turnInputTick -= 1;
+		if (!Hud.GetInDepot()) // if you're allowed to move
+		{
 
-		if (Input.IsKeyPressed(Handbrake)) _handbrakeInputTick = true;
-		if (Input.IsKeyPressed(Boost)) _boostInputTick = true;
+			if (Input.IsKeyPressed(Accelerate)) _accelInputTick += 1;
+			if (Input.IsKeyPressed(Brake)) _accelInputTick -= 1;
 
-		if (Input.IsKeyPressed(Interact)) _interactInputTick = true;
-		if (Input.IsKeyPressed(FullMap)) _fullmapInputTick = true;
+			if (Input.IsKeyPressed(LeftTurn)) _turnInputTick += 1;
+			if (Input.IsKeyPressed(RightTurn)) _turnInputTick -= 1;
+
+			if (Input.IsKeyPressed(Handbrake)) _handbrakeInputTick = true;
+			if (Input.IsKeyPressed(Boost)) _boostInputTick = true;
+
+			if (Input.IsKeyPressed(Interact)) _interactInputTick = true;
+			if (Input.IsKeyPressed(FullMap)) _fullmapInputTick = true;
+
+		}
 	}
 
 	#region Movement Controller
@@ -212,6 +216,11 @@ public partial class Player : CharacterBody2D
 
 		if (_handbrakeInputTick)
 		{
+			if (BottleUpMath.IsOfPercentageThreshold(_speed, MaxSpeed, 0.75f))
+			{
+                GetInventory().Damage(0.05f * _speed / 4);
+            }
+
 			_speed -= _speed / 100 * 1.5f;
 			_turnMultiplier *= 1.45f;
 		}
@@ -224,7 +233,6 @@ public partial class Player : CharacterBody2D
 
 		_sprite.SetRotation(RotationDegrees + twistAdd);
 
-		
 
 		Velocity += BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * _accelInputTick * (_speed / braker) * -1; // Apply Speed
 		if (_speed != 0) Velocity /= Friction + .75f/_speed; // Apply Friction; allows player to stop moving when not inputting controls
@@ -237,7 +245,12 @@ public partial class Player : CharacterBody2D
 	{
 		if (_onGrass && _speed != 0) Velocity /= GrassFriction + .25f / _speed;
 
-		MoveAndSlide();
+		bool collided = MoveAndSlide();
+
+		if (collided)
+		{
+			GetInventory().Damage(0.05f * _speed / 2);
+        }
 	}
 
 	#endregion
@@ -253,4 +266,28 @@ public partial class Player : CharacterBody2D
 	public void SetRating(Rating rating) => _rating = rating;
 	#endregion
 
+
+	public void SetCanInteract(Poi poi, bool close)
+	{
+		if (_interactables.ContainsKey(poi))
+		{
+			_interactables[poi] = close;
+		}
+		else
+		{
+			_interactables.Add(poi, close);
+		}
+	}
+
+	public bool GetInteraction(out Poi poi)
+	{
+		poi = null;
+
+		if (_interactables.Any(kv => kv.Value))
+		{
+			poi = _interactables.First(kv => kv.Value).Key;
+			return true;
+		}
+		else return false;
+	}
 }

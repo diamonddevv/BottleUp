@@ -40,6 +40,8 @@ namespace BottleUp.asset.script.Game
             public int TextureIndex;
 
             public int MilkUnitWeight;
+
+            public EnumItem Enum;
         }
 
         public static List<Item> Items = new List<Item>()
@@ -52,10 +54,12 @@ namespace BottleUp.asset.script.Game
                 MaxDeliverable = 15,
 
                 IsMilkBottle = true,
-                MilkColor = new Vector4(.8f,.8f,.8f,1),
+                MilkColor = new Vector4(.9f,.9f,.9f,1),
                 TextureIndex = 0,
 
                 MilkUnitWeight = 1,
+
+                Enum = EnumItem.CowMilk,
             },
             new Item()
             {
@@ -69,11 +73,13 @@ namespace BottleUp.asset.script.Game
                 TextureIndex = 1,
 
                 MilkUnitWeight = 2,
+
+                Enum = EnumItem.StrawberryMilk,
             },
             new Item()
             {
                 Name = "Banana Milk",
-                Description = "Fit for a minion!",
+                Description = "\"10/10\" - Monkeys across the globe",
 
                 MaxDeliverable = 8,
 
@@ -82,6 +88,8 @@ namespace BottleUp.asset.script.Game
                 TextureIndex = 2,
 
                 MilkUnitWeight = 2,
+
+                Enum = EnumItem.BananaMilk,
             },
             new Item()
             {
@@ -95,6 +103,8 @@ namespace BottleUp.asset.script.Game
                 TextureIndex = 3,
 
                 MilkUnitWeight = 2,
+
+                Enum = EnumItem.ChocolateMilk,
             },
             new Item()
             {
@@ -108,6 +118,8 @@ namespace BottleUp.asset.script.Game
                 TextureIndex = 4,
 
                 MilkUnitWeight = 3,
+
+                Enum = EnumItem.CoconutMilk,
             },
             new Item()
             {
@@ -121,6 +133,8 @@ namespace BottleUp.asset.script.Game
                 TextureIndex = 5,
 
                 MilkUnitWeight = 3,
+
+                Enum = EnumItem.OatMilk,
             },
             new Item()
             {
@@ -134,6 +148,8 @@ namespace BottleUp.asset.script.Game
                 TextureIndex = 6,
 
                 MilkUnitWeight = 3,
+
+                Enum = EnumItem.AlmondMilk,
             },
             new Item()
             {
@@ -147,6 +163,8 @@ namespace BottleUp.asset.script.Game
                 TextureIndex = 7,
 
                 MilkUnitWeight = 3,
+
+                Enum = EnumItem.SoyaMilk,
             },
             new Item()
             {
@@ -159,6 +177,8 @@ namespace BottleUp.asset.script.Game
                 TextureIndex = 8,
 
                 MilkUnitWeight = 5,
+
+                Enum = EnumItem.Cheese,
             },
             new Item()
             {
@@ -171,6 +191,8 @@ namespace BottleUp.asset.script.Game
                 TextureIndex = 9,
 
                 MilkUnitWeight = 5,
+
+                Enum = EnumItem.Cream,
             },
             new Item()
             {
@@ -183,6 +205,8 @@ namespace BottleUp.asset.script.Game
                 TextureIndex = 10,
 
                 MilkUnitWeight = 5,
+
+                Enum = EnumItem.Butter,
             },
             new Item()
             {
@@ -195,6 +219,8 @@ namespace BottleUp.asset.script.Game
                 TextureIndex = 11,
 
                 MilkUnitWeight = 20,
+
+                Enum = EnumItem.Cow,
             },
         };
     }

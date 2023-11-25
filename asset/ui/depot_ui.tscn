@@ -1,0 +1,171 @@
+[gd_scene load_steps=18 format=3 uid="uid://ck4icg0x1y2u4"]
+
+[ext_resource type="Texture2D" uid="uid://cmih5hcw30ioq" path="res://asset/texture/ui/depot_ui_bg.png" id="1_ixjd4"]
+[ext_resource type="Script" path="res://asset/script/GUI/Depot.cs" id="1_lbcl3"]
+[ext_resource type="Theme" uid="uid://y255ykpkjam0" path="res://asset/font/PixellariFontTheme.tres" id="2_pv8qf"]
+[ext_resource type="PackedScene" uid="uid://bqeq8xrs1ycit" path="res://asset/ui/minimap.tscn" id="3_mvmjc"]
+[ext_resource type="Texture2D" uid="uid://c3ylsn7vikpxi" path="res://asset/texture/ui/hud_icons.png" id="5_3jhwi"]
+[ext_resource type="Texture2D" uid="uid://dd40g7pa6jehy" path="res://asset/texture/ui/scale.png" id="5_b5m2c"]
+[ext_resource type="LabelSettings" uid="uid://swbyh6dnefyb" path="res://asset/font/PixellariLabelSettings.tres" id="6_h1oqy"]
+[ext_resource type="PackedScene" uid="uid://bo6iix6btgced" path="res://asset/prefab/deliverable_item.tscn" id="7_a1squ"]
+[ext_resource type="Script" path="res://asset/script/GUI/DepotItemButton.cs" id="8_yy0uq"]
+[ext_resource type="Texture2D" uid="uid://bh27wnt10441g" path="res://asset/texture/ui/plus_minus.png" id="9_871db"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yap00"]
+atlas = ExtResource("5_3jhwi")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xkw85"]
+atlas = ExtResource("9_871db")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_shi3x"]
+atlas = ExtResource("9_871db")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ou57"]
+atlas = ExtResource("9_871db")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hmbs5"]
+atlas = ExtResource("9_871db")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tk485"]
+atlas = ExtResource("9_871db")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8bnqq"]
+atlas = ExtResource("9_871db")
+region = Rect2(16, 32, 16, 16)
+
+[node name="depot" type="CanvasLayer" node_paths=PackedStringArray("ItemButton")]
+script = ExtResource("1_lbcl3")
+ItemButton = NodePath("itemButton")
+
+[node name="bg" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_ixjd4")
+
+[node name="minimap" parent="." instance=ExtResource("3_mvmjc")]
+offset_left = 1135.0
+offset_top = 145.0
+offset_right = 1135.0
+offset_bottom = 145.0
+CameraZoom = Vector2(18, 18)
+DisplayClosestDestinationDistance = false
+FullClickable = true
+
+[node name="leaveButton" type="Button" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 39.0
+offset_top = -119.0
+offset_right = 92.0
+offset_bottom = -79.0
+grow_vertical = 0
+scale = Vector2(2, 2)
+theme = ExtResource("2_pv8qf")
+text = "Load Items in Vehicle and Leave"
+icon = SubResource("AtlasTexture_yap00")
+
+[node name="scale" type="MarginContainer" parent="."]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -10.5
+offset_right = -79.0
+offset_bottom = 12.5
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(0.993574, 1)
+
+[node name="sprite" type="Sprite2D" parent="scale"]
+position = Vector2(47, 39.5)
+scale = Vector2(10, 10)
+texture = ExtResource("5_b5m2c")
+
+[node name="weight" type="Label" parent="scale"]
+layout_mode = 2
+theme = ExtResource("2_pv8qf")
+text = "Weight:"
+label_settings = ExtResource("6_h1oqy")
+
+[node name="numeral" type="Label" parent="scale/weight"]
+layout_mode = 2
+offset_left = -13.0
+offset_top = 11.0
+offset_right = 27.0
+offset_bottom = 34.0
+scale = Vector2(3, 3)
+text = "+20"
+label_settings = ExtResource("6_h1oqy")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="milkUnits" type="Label" parent="scale/weight"]
+layout_mode = 2
+offset_left = 75.0
+offset_top = 62.0
+offset_right = 115.0
+offset_bottom = 85.0
+text = "mu"
+label_settings = ExtResource("6_h1oqy")
+
+[node name="itemButton" type="Control" parent="." node_paths=PackedStringArray("Item", "AddButton", "SubtractButton")]
+visible = false
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 603.0
+offset_top = 35.0
+offset_right = 643.0
+offset_bottom = 35.0
+script = ExtResource("8_yy0uq")
+Item = NodePath("item")
+AddButton = NodePath("+")
+SubtractButton = NodePath("-")
+
+[node name="item" parent="itemButton" instance=ExtResource("7_a1squ")]
+scale = Vector2(1.25, 1.25)
+ShowDescription = true
+IconScaleModifier = Vector2(1.25, 1.25)
+
+[node name="+" type="TextureButton" parent="itemButton"]
+layout_mode = 2
+offset_left = 106.0
+offset_top = -6.0
+offset_right = 146.0
+offset_bottom = 34.0
+texture_normal = SubResource("AtlasTexture_xkw85")
+texture_pressed = SubResource("AtlasTexture_shi3x")
+texture_focused = SubResource("AtlasTexture_0ou57")
+
+[node name="-" type="TextureButton" parent="itemButton"]
+layout_mode = 2
+offset_left = 122.0
+offset_top = -6.0
+offset_right = 162.0
+offset_bottom = 34.0
+texture_normal = SubResource("AtlasTexture_hmbs5")
+texture_pressed = SubResource("AtlasTexture_tk485")
+texture_focused = SubResource("AtlasTexture_8bnqq")
+
+[node name="items" type="VBoxContainer" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 32.0
+offset_top = 35.0
+offset_right = 72.0
+offset_bottom = 75.0
+grow_horizontal = 2
+scale = Vector2(3, 3)

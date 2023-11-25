@@ -12,6 +12,7 @@ public partial class Minimap : Control
 	[Export] public Vector2 CameraZoom = BottleUpMath.Uniform(8f);
 	[Export] public bool RotateEverything = true; // Rotates the entire map, rather than the player
 	[Export] public bool DisplayClosestDestinationDistance = true;
+	[Export] public bool FullClickable = false;
 
 	[ExportCategory("Minimap Icons")]
 	[Export] public NodePath Player;
@@ -25,7 +26,11 @@ public partial class Minimap : Control
     [Export] public NodePath Depot;
     [Export] public NodePath Destination;
 
-	public MainGameManager GameManager { get; set; }
+
+    [Signal]
+    public delegate void MapFullClickedEventHandler(bool isNowFull);
+
+    public MainGameManager GameManager { get; set; }
 
     private SubViewportContainer _container;
     private TextureRect _frame;
@@ -43,14 +48,19 @@ public partial class Minimap : Control
 	private Sprite2D _west;
 
     private Sprite2D _depot;
-    private Sprite2D _destinationIcon;
-    private List<(Vector2 pos, Sprite2D icon)> _destinations;
+    private AnimatedSprite2D _destinationIcon;
+    private List<(Vector2 pos, AnimatedSprite2D icon)> _destinations;
 
     private Map _map;
 	private Player _player;
 
 	private int _minimapNavArrowDistIndex;
 	private Vector2 _minimapDepotPosition;
+
+	private bool _isFull;
+	private bool _isMouseOver;
+	private bool _clickTick;
+	private bool _lastClickTick;
 
 	public override void _Ready()
 	{
@@ -71,7 +81,7 @@ public partial class Minimap : Control
 		_west = GetNode<Sprite2D>(West);
 
         _depot = GetNode<Sprite2D>(Depot);
-        _destinationIcon = GetNode<Sprite2D>(Destination);
+        _destinationIcon = GetNode<AnimatedSprite2D>(Destination);
 
         _cam.CustomViewport = _view;
         _cam.Position = Vector2.Zero;
@@ -85,16 +95,41 @@ public partial class Minimap : Control
 		_navArrow.Position = _frame.Position + _frame.Size.Multiply(0, .82f);
 
 		_navArrow.Scale = BottleUpMath.Uniform(3);
+
+
+		MouseEntered += () => _isMouseOver = true;
+		MouseExited += () => _isMouseOver = false;
     }
 
 	
 	public override void _Process(double delta)
 	{
+		_lastClickTick = _clickTick;
+		_clickTick = _isMouseOver && Input.IsMouseButtonPressed(MouseButton.Left);
+
+		if (_clickTick && !_lastClickTick && FullClickable)
+		{
+            _isFull = !_isFull;
+            EmitSignal(SignalName.MapFullClicked, _isFull);
+        }
+
         _closestDestLabel.Visible = DisplayClosestDestinationDistance;
+		_navArrow.Visible = DisplayClosestDestinationDistance;
+
+		_frame.Visible = !_isFull;
+
+		if (_isFull)
+		{
+			var v = GetViewport().GetVisibleRect().Size.Multiply(.75f, 1.3f).RoundInts();
+			_view.Size = v;
+		} else
+		{
+			_view.Size = new Vector2I(250, 250);
+		}
 
 		if (!Engine.IsEditorHint())
 		{
-			(Vector2 pos, Sprite2D icon) closestDest = (-Vector2.Inf, null);
+			(Vector2 pos, AnimatedSprite2D icon) closestDest = (-Vector2.Inf, null);
 			float closestDestDist = float.NaN;
 
 			_cam.Position = _player.Position;
@@ -127,12 +162,14 @@ public partial class Minimap : Control
 			{
 				foreach (var t in _destinations)
 				{
-					t.icon.Visible = GameManager.GetActiveRequests().Any(kvp => kvp.Key.Position == t.pos);
+					bool hasReq = GameManager.GetActiveRequests().Any(kvp => kvp.Key.Position == t.pos);
 
-					if (t.icon.Visible)
+                    t.icon.Position = t.pos;
+                    t.icon.Rotation = (RotateEverything ? 1 : 0) * _player.Rotation;
+
+                    if (hasReq)
 					{
-						t.icon.Position = t.pos;
-						t.icon.Rotation = (RotateEverything ? 1 : 0) * _player.Rotation;
+						t.icon.Play("req");
 
 						var dist = _playerIcon.Position.DistanceSquaredTo(t.pos * scale);
 						if (float.IsNaN(closestDestDist) || dist < closestDestDist)
@@ -140,6 +177,9 @@ public partial class Minimap : Control
 							closestDest = t;
 							closestDestDist = dist;
 						}
+					} else
+					{
+						t.icon.Play("unreq");
 					}
 				}
 			}
@@ -171,7 +211,7 @@ public partial class Minimap : Control
 	public void SetMapScene(PackedScene mapScene)
 	{
 
-		_destinations = new List<(Vector2 pos, Sprite2D icon)>();
+		_destinations = new List<(Vector2 pos, AnimatedSprite2D icon)>();
 
         _map = mapScene.Instantiate<Map>();
         _view.AddChild(_map);
@@ -189,7 +229,7 @@ public partial class Minimap : Control
 
 					if (poi.PointOfInterestType == Poi.PoiType.Destination)
 					{
-						_destinations.Add((poi.Position, _destinationIcon.Duplicate() as Sprite2D));
+						_destinations.Add((poi.Position, _destinationIcon.Duplicate() as AnimatedSprite2D));
 					}
 				}
 
@@ -257,10 +297,7 @@ public partial class Minimap : Control
 		} else
 		{
 			float arbMeters = BottleUpMath.SqrPxToArbMeters(dist);
-			if (arbMeters < 100)
-			{
-				arbMeters = (float)Math.Round(arbMeters, 2);
-			}
+            arbMeters = (float)Math.Round(arbMeters, 1);
             d = $"{arbMeters}m";
 		}
 
@@ -273,4 +310,8 @@ public partial class Minimap : Control
         // tldr; i dont know how this works
 		return from.DirectionTo(to).Angle() + 90;
     }
+
+
+	public void SetFull(bool b) => _isFull = b;
+	public SubViewport GetView() => _view;
 }

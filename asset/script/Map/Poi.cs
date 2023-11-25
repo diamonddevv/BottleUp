@@ -28,14 +28,17 @@ public partial class Poi : StaticBody2D
     [Signal]
     public delegate void PoiDeliveryMadeEventHandler();
 
+    [Signal]
+    public delegate void PoiDepotInteractedEventHandler();
+
 
     private float _sqrDistToPlayer;
 	private StackedSprite _sprite;
 	private Node2D _entrance;
 	private Map _map;
-	private Player _player;
+    private Player _player;
 
-	private MainGameManager.DeliveryRequest _delivery;
+	private MainGameManager.DeliveryRequest? _delivery;
 	
 	public override void _Ready()
 	{
@@ -63,22 +66,27 @@ public partial class Poi : StaticBody2D
 	public bool CheckInteraction()
 	{
         if (float.IsNaN(_sqrDistToPlayer)) return false;
-        if (_sqrDistToPlayer <= _player.SquareInteractDistanceThreshold)
+        if (_sqrDistToPlayer <= _player.SquareArbMeterInteractDistanceThreshold / BottleUpMath.SQUARED_PIXELS_TO_ARB_METERS)
         {
+            if (PointOfInterestType == PoiType.Depot || _delivery != null) _player.SetCanInteract(this, true);
+
             if (_player.GetIsInteracting())
             {
 				return true;
             }
+
+            return false;
         }
-		return false;
+        _player.SetCanInteract(this, false);
+
+        return false;
     }
 
     public void DoDepotPoiProcess(double delta)
     {
         if (CheckInteraction())
         {
-			"asd".Test();
-			// Open Depot UI
+            EmitSignal(SignalName.PoiDepotInteracted);
         }
     }
 
@@ -86,10 +94,14 @@ public partial class Poi : StaticBody2D
     {
         if (CheckInteraction())
         {
-			// Deliver Item
-			EmitSignal(SignalName.PoiDeliveryMade);
-
-			_delivery.Made = true;
+            if (_delivery.HasValue)
+            {
+                var v = _delivery.Value;
+                // Deliver Item
+                EmitSignal(SignalName.PoiDeliveryMade);
+                v.Made = true;
+            }
+			
         }
     }
 
@@ -113,7 +125,8 @@ public partial class Poi : StaticBody2D
         }
     }
 
-	public MainGameManager.DeliveryRequest GetDelivery() => _delivery;
+	public MainGameManager.DeliveryRequest? GetDelivery() => _delivery;
+    public void SetDelivery(MainGameManager.DeliveryRequest? d) => _delivery = d;
 
     public enum PoiType
 	{

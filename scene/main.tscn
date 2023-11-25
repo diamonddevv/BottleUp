@@ -5,10 +5,11 @@
 [ext_resource type="PackedScene" uid="uid://c0gnnuv46qov1" path="res://asset/ui/hud.tscn" id="1_l1ahy"]
 [ext_resource type="PackedScene" uid="uid://c4yvit5cxiucl" path="res://asset/prefab/map.tscn" id="1_rsrif"]
 
-[node name="main" type="Node" node_paths=PackedStringArray("GameTimer", "Map")]
+[node name="main" type="Node" node_paths=PackedStringArray("GameTimer", "Map", "Player")]
 script = ExtResource("1_dwsvn")
 GameTimer = NodePath("gameTimer")
 Map = NodePath("Map")
+Player = NodePath("player")
 GameSeconds = 300.0
 
 [node name="Map" parent="." instance=ExtResource("1_rsrif")]
@@ -17,9 +18,10 @@ Player = NodePath("../player")
 [node name="playerCamera" type="Camera2D" parent="."]
 position = Vector2(1360, -49)
 
-[node name="player" parent="." instance=ExtResource("1_cj3hu")]
+[node name="player" parent="." node_paths=PackedStringArray("Camera", "Hud") instance=ExtResource("1_cj3hu")]
 position = Vector2(555, 3578)
 Camera = NodePath("../playerCamera")
+Hud = NodePath("../hud")
 
 [node name="hud" parent="." node_paths=PackedStringArray("GameManager") instance=ExtResource("1_l1ahy")]
 Player = NodePath("../player")
@@ -28,3 +30,5 @@ GameManager = NodePath("..")
 InGameTimer = NodePath("../gameTimer")
 
 [node name="gameTimer" type="Timer" parent="."]
+
+[connection signal="DepotInteracted" from="Map" to="hud" method="OnDepotInteracted"]

@@ -91,5 +91,15 @@ public partial class PlayerInventoryHandler : Node
 		return dict;
 	}
 
+	public void Damage(float f)
+	{
+		List<(float damage, EnumItem item)> items = new List<(float damage, EnumItem item)>();
+		foreach (var i in _carriedItems)
+		{
+			items.Add((i.damage - f, i.item));
+		}
+		_carriedItems = items;
+	}
+
 	public int GetWeight() => _carriedWeight;
 }

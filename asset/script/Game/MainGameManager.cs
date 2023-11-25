@@ -29,8 +29,11 @@ public partial class MainGameManager : Node
 
         Map.DeliveryMade += (poi) =>
         {
-            var v = poi.GetDelivery();
-            Player.GetCompletedDeliveries().Add(v);
+            if (poi.GetDelivery() != null)
+            {
+                var v = poi.GetDelivery();
+                Player.GetCompletedDeliveries().Add(v.Value);
+            }
         };
 
 		Start();
@@ -52,6 +55,7 @@ public partial class MainGameManager : Node
                     DeliveryRequest req = DeliveryRequest.WithRandomFields(random, GameTimer);
 
                     _activeRequests.Add(dest, req);
+                    dest.SetDelivery(req);
                 }
             }
 		}
