@@ -150,6 +150,17 @@ texture = SubResource("AtlasTexture_eoisg")
 position = Vector2(-1010, -20)
 texture = SubResource("AtlasTexture_1b5hi")
 
+[node name="clickToFullLabel" type="Label" parent="."]
+offset_left = -94.0
+offset_top = 141.0
+offset_right = 94.0
+offset_bottom = 179.0
+theme = ExtResource("4_cwfpb")
+text = "Click to Maximize/Minimize"
+label_settings = ExtResource("5_p48t4")
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="closestDestLabel" type="Label" parent="."]
 layout_mode = 2
 offset_left = -68.5

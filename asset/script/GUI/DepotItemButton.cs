@@ -15,4 +15,11 @@ public partial class DepotItemButton : Control
 	public override void _Process(double delta)
 	{
 	}
+
+
+	public void SetDisabled(bool b)
+	{
+		AddButton.Disabled = b;
+		SubtractButton.Disabled = b;
+	}
 }

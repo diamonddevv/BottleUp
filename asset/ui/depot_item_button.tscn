@@ -1,0 +1,65 @@
+[gd_scene load_steps=10 format=3 uid="uid://cbhjupjonlk13"]
+
+[ext_resource type="Script" path="res://asset/script/GUI/DepotItemButton.cs" id="1_5adna"]
+[ext_resource type="PackedScene" uid="uid://bo6iix6btgced" path="res://asset/prefab/deliverable_item.tscn" id="2_by6m4"]
+[ext_resource type="Texture2D" uid="uid://bh27wnt10441g" path="res://asset/texture/ui/plus_minus.png" id="3_px1n3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xkw85"]
+atlas = ExtResource("3_px1n3")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_shi3x"]
+atlas = ExtResource("3_px1n3")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ou57"]
+atlas = ExtResource("3_px1n3")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hmbs5"]
+atlas = ExtResource("3_px1n3")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tk485"]
+atlas = ExtResource("3_px1n3")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8bnqq"]
+atlas = ExtResource("3_px1n3")
+region = Rect2(16, 32, 16, 16)
+
+[node name="itemButton" type="Control" node_paths=PackedStringArray("Item", "AddButton", "SubtractButton")]
+custom_minimum_size = Vector2(180, 18)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 15.0
+script = ExtResource("1_5adna")
+Item = NodePath("item")
+AddButton = NodePath("+")
+SubtractButton = NodePath("-")
+
+[node name="item" parent="." instance=ExtResource("2_by6m4")]
+scale = Vector2(1.25, 1.25)
+ShowDescription = true
+IconScaleModifier = Vector2(1.25, 1.25)
+
+[node name="+" type="TextureButton" parent="."]
+layout_mode = 2
+offset_left = 116.0
+offset_top = -6.0
+offset_right = 156.0
+offset_bottom = 34.0
+texture_normal = SubResource("AtlasTexture_xkw85")
+texture_pressed = SubResource("AtlasTexture_shi3x")
+texture_focused = SubResource("AtlasTexture_0ou57")
+
+[node name="-" type="TextureButton" parent="."]
+layout_mode = 2
+offset_left = 132.0
+offset_top = -6.0
+offset_right = 172.0
+offset_bottom = 34.0
+texture_normal = SubResource("AtlasTexture_hmbs5")
+texture_pressed = SubResource("AtlasTexture_tk485")
+texture_focused = SubResource("AtlasTexture_8bnqq")

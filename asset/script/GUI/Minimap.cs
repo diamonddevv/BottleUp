@@ -37,6 +37,7 @@ public partial class Minimap : Control
     private SubViewport _view;
 	private Camera2D _cam;
 	private Label _closestDestLabel;
+	private Label _clickToFullLabel;
 	private Sprite2D _navArrow;
 
 	private Sprite2D _playerIcon;
@@ -69,6 +70,7 @@ public partial class Minimap : Control
         _view = GetNode<SubViewport>("container/view");
         _cam = GetNode<Camera2D>("container/view/cam");
         _closestDestLabel = GetNode<Label>("closestDestLabel");
+        _clickToFullLabel = GetNode<Label>("clickToFullLabel");
 		_navArrow = GetNode<Sprite2D>("navArrow");
 
 
@@ -106,6 +108,8 @@ public partial class Minimap : Control
 	{
 		_lastClickTick = _clickTick;
 		_clickTick = _isMouseOver && Input.IsMouseButtonPressed(MouseButton.Left);
+
+		if (_clickToFullLabel != null) _clickToFullLabel.Visible = FullClickable;
 
 		if (_clickTick && !_lastClickTick && FullClickable)
 		{

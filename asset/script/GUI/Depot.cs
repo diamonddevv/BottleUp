@@ -8,9 +8,10 @@ public partial class Depot : CanvasLayer
 {
 	public HUD Hud { get; set; }
 
-	[Export] private Control ItemButton;
+	[Export] public int ItemsPerHBox;
 
 	private Minimap _map;
+	private ColorRect _mapFullOverlay;
 	private Button _leaveButton;
 	private Label _scaleWeightLabel;
 	private VBoxContainer _items;
@@ -25,6 +26,7 @@ public partial class Depot : CanvasLayer
 	public override void _Ready()
 	{
 		_map = GetNode<Minimap>("minimap");
+		_mapFullOverlay = GetNode<ColorRect>("mapFullOverlay");
 		_leaveButton = GetNode<Button>("leaveButton");
 		_items = GetNode<VBoxContainer>("items");
         _scaleWeightLabel = GetNode<Label>("scale/weight/numeral");
@@ -41,9 +43,36 @@ public partial class Depot : CanvasLayer
 			if (state)
 			{
 				_map.Position = (GetWindow().GetVisibleRect().Size / 2).Multiply(1, 1.5f);
+
+				_mapFullOverlay.Visible = true;
+
+				foreach (var hbox in _items.GetChildren())
+				{
+					foreach (var c in hbox.GetChildren())
+					{
+                        if (c is DepotItemButton dib)
+                        {
+                            dib.SetDisabled(true);
+                        }
+                    }
+				}
+
             } else
 			{
 				_map.Position = CalculateReturnPos();
+
+                _mapFullOverlay.Visible = false;
+
+                foreach (var hbox in _items.GetChildren())
+                {
+                    foreach (var c in hbox.GetChildren())
+                    {
+                        if (c is DepotItemButton dib)
+                        {
+                            dib.SetDisabled(false);
+                        }
+                    }
+                }
             }
         };
 
@@ -52,37 +81,53 @@ public partial class Depot : CanvasLayer
 
 		GetWindow().SizeChanged += () => { if (!_isMapFull) _map.Position = CalculateReturnPos(); };
 
+		int hboxCount = 0;
+		HBoxContainer hbox = new HBoxContainer();
+		_items.AddChild(hbox);
 		foreach (var itemType in DeliverableItems.Items)
 		{
 			var enumItem = itemType.Enum;
-            DepotItemButton clonedItemButton = ItemButton.Duplicate(4) as DepotItemButton;
-            _items.AddChild(clonedItemButton);
+			DepotItemButton button = ResourceLoader.Load<PackedScene>("res://asset/ui/depot_item_button.tscn").Instantiate<DepotItemButton>();
 
-            clonedItemButton.Item.UniqueifyBottleTexture();
-            clonedItemButton.Item.UniqueifyItemTexture();
-            clonedItemButton.Item.UniqueifyMilkShader();
+            hbox.AddChild(button);
 
-            clonedItemButton.Item.Item = enumItem;
-			clonedItemButton.Item.UseInventoryLabel = true;
-			clonedItemButton.Item.ShowDescription = true;
+            button.Item.UniqueifyBottleTexture();
+            button.Item.UniqueifyItemTexture();
+            button.Item.UniqueifyMilkShader();
+
+            button.Item.Item = enumItem;
+            button.Item.UseInventoryLabel = true;
+			button.Item.ShowDescription = true;
 
 
-			clonedItemButton.AddButton.Pressed += () =>
+            button.AddButton.Pressed += () =>
 			{
-				clonedItemButton.Item.Count += 1;
-				_weightAdded += itemType.MilkUnitWeight;
-				_itemsToAdd.Add(enumItem);
-			};
-            clonedItemButton.SubtractButton.Pressed += () =>
-            {
-				if (clonedItemButton.Item.Count > 0)
+				if (_weightAdded + itemType.MilkUnitWeight <= 20)
 				{
-                    clonedItemButton.Item.Count -= 1;
+					button.Item.Count += 1;
+					_weightAdded += itemType.MilkUnitWeight;
+					_itemsToAdd.Add(enumItem);
+				}
+			};
+            button.SubtractButton.Pressed += () =>
+            {
+				if (button.Item.Count > 0)
+				{
+                    button.Item.Count -= 1;
                     _weightAdded -= itemType.MilkUnitWeight;
                     _itemsToAdd.Remove(enumItem);
                 }
             };
-			clonedItemButton.Visible = true;
+
+            button.Visible = true;
+
+			hboxCount += 1;
+			if (hboxCount >= ItemsPerHBox)
+			{
+                hbox = new HBoxContainer();
+                _items.AddChild(hbox);
+				hboxCount = 0;
+			}
 
 		}
 

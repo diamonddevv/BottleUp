@@ -109,7 +109,7 @@ namespace BottleUp.asset.script.Game
             new Item()
             {
                 Name = "Coconut Milk",
-                Description = "The coconut nut is a giant nut, but this delicious nut is not a nut.",
+                Description = "The coconut nut is a giant nut, \nbut this delicious nut is not a nut.",
 
                 MaxDeliverable = 5,
 
@@ -183,7 +183,7 @@ namespace BottleUp.asset.script.Game
             new Item()
             {
                 Name = "Cream",
-                Description = "Milk minus.. most of the milk. It's part of it, I suppose.",
+                Description = "Milk minus.. most of the milk. \nIt's part of it, I suppose.",
 
                 MaxDeliverable = 3,
 
