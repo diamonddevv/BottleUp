@@ -108,3 +108,13 @@ offset_bottom = 145.0
 CameraZoom = Vector2(18, 18)
 DisplayClosestDestinationDistance = false
 FullClickable = true
+
+[node name="deliveries" type="VBoxContainer" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 342.0
+offset_top = 31.0
+offset_right = 382.0
+offset_bottom = 71.0
+grow_horizontal = 2

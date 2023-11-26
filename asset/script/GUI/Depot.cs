@@ -3,6 +3,7 @@ using BottleUp.asset.script.Util;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 
 public partial class Depot : CanvasLayer
 {
@@ -15,6 +16,7 @@ public partial class Depot : CanvasLayer
 	private Button _leaveButton;
 	private Label _scaleWeightLabel;
 	private VBoxContainer _items;
+	private VBoxContainer _deliveries;
 
 	private List<DeliverableItems.EnumItem> _itemsToAdd;
 	private int _weightAdded;
@@ -29,10 +31,19 @@ public partial class Depot : CanvasLayer
 		_mapFullOverlay = GetNode<ColorRect>("mapFullOverlay");
 		_leaveButton = GetNode<Button>("leaveButton");
 		_items = GetNode<VBoxContainer>("items");
+		_deliveries = GetNode<VBoxContainer>("deliveries");
         _scaleWeightLabel = GetNode<Label>("scale/weight/numeral");
 
         _leaveButton.Pressed += () =>
 		{
+			
+			foreach (var item in _itemsToAdd)
+			{
+                Hud.GetPlayer().GetInventory().CheckWeightAndAddItem(item);
+            }
+
+			_itemsToAdd.Clear();
+
 			Hud.SetInDepot(false);
 		};
 
@@ -45,6 +56,9 @@ public partial class Depot : CanvasLayer
 				_map.Position = (GetWindow().GetVisibleRect().Size / 2).Multiply(1, 1.5f);
 
 				_mapFullOverlay.Visible = true;
+				_deliveries.Visible = true;
+
+				BuildDeliveries(Hud.GameManager);
 
 				foreach (var hbox in _items.GetChildren())
 				{
@@ -62,6 +76,7 @@ public partial class Depot : CanvasLayer
 				_map.Position = CalculateReturnPos();
 
                 _mapFullOverlay.Visible = false;
+                _deliveries.Visible = false;
 
                 foreach (var hbox in _items.GetChildren())
                 {
@@ -133,14 +148,43 @@ public partial class Depot : CanvasLayer
 
 	}
 
-	public void _Opened()
+    private void BuildDeliveries(MainGameManager manager)
+    {
+		foreach (var child in _deliveries.GetChildren()) child.QueueFree();
+
+		foreach (var delivery in manager.GetActiveRequests())
+		{
+			DeliveryHighlight highlight = ResourceLoader.Load<PackedScene>("res://asset/ui/delivery_highlight.tscn").Instantiate<DeliveryHighlight>();
+
+
+			_deliveries.AddChild(highlight);
+			highlight.Show();
+
+			highlight.Minimap = _map;
+			highlight.Poi = delivery.Key;
+			highlight.Request = delivery.Value;
+		}
+    }
+
+    public void _Opened()
 	{
 		_map.SetFull(false);
 		_map.Position = CalculateReturnPos();
 
 		_itemsToAdd = new List<DeliverableItems.EnumItem>();
 		_weightAdded = 0;
-	}
+
+        foreach (var hbox in _items.GetChildren())
+        {
+            foreach (var c in hbox.GetChildren())
+            {
+                if (c is DepotItemButton dib)
+                {
+					dib.Item.Count = 0;
+                }
+            }
+        }
+    }
 
 	public override void _Process(double delta)
 	{

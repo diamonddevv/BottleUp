@@ -8,6 +8,12 @@ using System.Linq;
 [Tool]
 public partial class Minimap : Control
 {
+    public const string SHADER_ENABLED = "_enabled";
+
+    public const string NO_REQUEST = "unreq";
+	public const string REQUEST = "req";
+	public const string SELECTED = "sel";
+
 	[ExportCategory("Minimap Options")]
 	[Export] public Vector2 CameraZoom = BottleUpMath.Uniform(8f);
 	[Export] public bool RotateEverything = true; // Rotates the entire map, rather than the player
@@ -173,7 +179,7 @@ public partial class Minimap : Control
 
                     if (hasReq)
 					{
-						t.icon.Play("req");
+						t.icon.Play(REQUEST);
 
 						var dist = _playerIcon.Position.DistanceSquaredTo(t.pos * scale);
 						if (float.IsNaN(closestDestDist) || dist < closestDestDist)
@@ -183,9 +189,11 @@ public partial class Minimap : Control
 						}
 					} else
 					{
-						t.icon.Play("unreq");
+						t.icon.Play(NO_REQUEST);
 					}
-				}
+
+                    (t.icon.Material as ShaderMaterial).SetShaderParameter(SHADER_ENABLED, false);
+                }
 			}
 
             _closestDestLabel.Text = FormatLabelText(closestDestDist);
@@ -318,4 +326,16 @@ public partial class Minimap : Control
 
 	public void SetFull(bool b) => _isFull = b;
 	public SubViewport GetView() => _view;
+
+	public AnimatedSprite2D GetDestPoiIcon(Poi poi)
+	{
+		foreach (var t in _destinations)
+		{
+			if (t.pos == poi.Position)
+			{
+				return t.icon;
+			}
+		}
+		return null;
+	}
 }

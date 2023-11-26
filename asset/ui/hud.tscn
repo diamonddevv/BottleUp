@@ -29,6 +29,7 @@ region = Rect2(16, 16, 16, 16)
 [node name="hud" type="CanvasLayer"]
 process_mode = 3
 script = ExtResource("1_86cy1")
+DisplayFPS = true
 
 [node name="ingame" type="CanvasLayer" parent="."]
 

@@ -52,7 +52,7 @@ public partial class MainGameManager : Node
                     // Add a Request
                     var dest = random.RandomElement(Map.GetDestinations().FindAll((poi) => !_activeRequests.ContainsKey(poi))); // gives a random poi without a request already present
 
-                    DeliveryRequest req = DeliveryRequest.WithRandomFields(random, GameTimer);
+                    DeliveryRequest req = DeliveryRequest.WithRandomFields(random, GameTimer, 3);
 
                     _activeRequests.Add(dest, req);
                     dest.SetDelivery(req);

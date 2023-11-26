@@ -1,8 +1,9 @@
-[gd_scene load_steps=17 format=3 uid="uid://bqeq8xrs1ycit"]
+[gd_scene load_steps=25 format=3 uid="uid://bqeq8xrs1ycit"]
 
 [ext_resource type="Script" path="res://asset/script/GUI/Minimap.cs" id="1_00k54"]
 [ext_resource type="Texture2D" uid="uid://n7j0sng53oi6" path="res://asset/texture/ui/minimap_frame.png" id="2_gce4b"]
 [ext_resource type="Texture2D" uid="uid://btlmb2t8ede7a" path="res://asset/texture/ui/minimap_icons.png" id="2_lar3h"]
+[ext_resource type="Shader" path="res://asset/shader/RGBPhasing.gdshader" id="3_x7koo"]
 [ext_resource type="Theme" uid="uid://y255ykpkjam0" path="res://asset/font/PixellariFontTheme.tres" id="4_cwfpb"]
 [ext_resource type="LabelSettings" uid="uid://swbyh6dnefyb" path="res://asset/font/PixellariLabelSettings.tres" id="5_p48t4"]
 
@@ -13,6 +14,46 @@ region = Rect2(0, 0, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_t3i8p"]
 atlas = ExtResource("2_lar3h")
 region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_3pej2"]
+noise_type = 4
+seed = 234564
+frequency = 0.0393
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_omcqb"]
+seamless = true
+noise = SubResource("FastNoiseLite_3pej2")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_qpe2c"]
+noise_type = 3
+seed = 2436
+frequency = 0.0305
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_80sec"]
+seamless = true
+noise = SubResource("FastNoiseLite_qpe2c")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_7pndw"]
+seed = -703904397
+frequency = 0.0295
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tww6c"]
+invert = true
+seamless = true
+noise = SubResource("FastNoiseLite_7pndw")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h7q17"]
+shader = ExtResource("3_x7koo")
+shader_parameter/_enabled = false
+shader_parameter/speed = 0.02
+shader_parameter/direction = Vector2(3, 8)
+shader_parameter/zoom = Vector2(0.25, 0.25)
+shader_parameter/contrast = 1.0
+shader_parameter/brightness = 0.0
+shader_parameter/final_brightness = 0.1
+shader_parameter/noiseR = SubResource("NoiseTexture2D_tww6c")
+shader_parameter/noiseG = SubResource("NoiseTexture2D_80sec")
+shader_parameter/noiseB = SubResource("NoiseTexture2D_omcqb")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nln30"]
 atlas = ExtResource("2_lar3h")
@@ -123,6 +164,7 @@ texture = SubResource("AtlasTexture_t3i8p")
 
 [node name="destination" type="AnimatedSprite2D" parent="container/view"]
 visible = false
+material = SubResource("ShaderMaterial_h7q17")
 sprite_frames = SubResource("SpriteFrames_4pe7t")
 animation = &"sel"
 
@@ -167,6 +209,8 @@ offset_left = -68.5
 offset_top = 150.0
 offset_right = 68.5
 offset_bottom = 188.0
+grow_horizontal = 2
+grow_vertical = 2
 theme = ExtResource("4_cwfpb")
 text = "Closest Destination:
 123m"
