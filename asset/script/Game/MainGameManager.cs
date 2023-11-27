@@ -1,9 +1,7 @@
-using BottleUp.asset.script.Game;
 using BottleUp.asset.script.Util;
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using static BottleUp.asset.script.Game.DeliverableItems;
 using static BottleUp.asset.script.Util.BottleUpHelper;
 
@@ -20,7 +18,7 @@ public partial class MainGameManager : Node
 
 	[ExportCategory("Settings")]
 	[Export] public double GameSeconds;
-    [Export] public int MaxRequests = 8;
+    [Export] public int MaxRequests = 10;
 
 
     private Random random;
@@ -174,17 +172,19 @@ public partial class MainGameManager : Node
             int currentWeight = 0;
             req.Items = new List<CountedItem>();
 
-
+            List<EnumItem> alreadyPresentItems = new List<EnumItem>();
             for (int i = 0; i < items; i++)
             {
                 var item = new CountedItem();
-                item.item = RandomItem(random);
+                item.item = RandomItem(random, alreadyPresentItems);
+
                 item.count = random.Next(GetByEnum(item.item).MaxDeliverable) + 1;
                 item.intactness = 1;
 
                 if (!(currentWeight + (item.count * GetByEnum(item.item).MilkUnitWeight) > PlayerInventoryHandler.MaxMilkUnitsCarriable))
                 {
                     currentWeight += item.count * GetByEnum(item.item).MilkUnitWeight;
+                    alreadyPresentItems.Add(item.item); 
                     req.Items.Add(item);
                 } else
                 {
@@ -192,7 +192,8 @@ public partial class MainGameManager : Node
                 }
             }
 
-            req.Priority = random.RandomElement(PrioritySpeed.PRIORITY_SPEEDS);
+            PrioritySpeed.Init();
+            req.Priority = random.RandomElement(PrioritySpeed.PRIORITY_SPEEDS, (p) => p.Weight);
             req.DispatchTime = timer.TimeLeft;
             req.Made = false;
 
@@ -210,14 +211,27 @@ public partial class MainGameManager : Node
     }
     public struct PrioritySpeed
     {
-        public static readonly List<PrioritySpeed> PRIORITY_SPEEDS = new List<PrioritySpeed>() { LOW, MID, HIGH };
+        public static List<PrioritySpeed> PRIORITY_SPEEDS = new List<PrioritySpeed>();
 
-        public static readonly PrioritySpeed LOW = new() { Time = 120, Name = "Low Priority", Color = 0x3bba00 };
-        public static readonly PrioritySpeed MID = new() { Time = 60, Name = "Medium Priority", Color = 0xfcf33d };
-        public static readonly PrioritySpeed HIGH = new() { Time = 30, Name = "High Priority", Color = 0xcf0404 };
+        public static void Init()
+        {
+            PRIORITY_SPEEDS.Add(LOW);
+            PRIORITY_SPEEDS.Add(MID);
+            PRIORITY_SPEEDS.Add(HIGH);
+        }
+
+        public static PrioritySpeed LOW = new() { Time = 120, Name = "Low", Color = 0x3bba00ff, Weight = 10 };
+        public static PrioritySpeed MID = new() { Time = 60, Name = "Medium", Color = 0xfcf33dff, Weight = 5 };
+        public static PrioritySpeed HIGH = new() { Time = 30, Name = "High", Color = 0xcf0404ff, Weight = 2 };
 
         public double Time;
         public string Name;
-        public int Color;
+        public uint Weight;
+        public uint Color;
+
+        public override string ToString()
+        {
+            return $"[{Name},{Color},{Time},{Weight}]";
+        }
     }
 }

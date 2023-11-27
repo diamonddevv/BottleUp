@@ -63,13 +63,15 @@ public partial class PlayerInventoryHandler : Node
 			}
 
 
-			EmitSignal(SignalName.InventoryUpdated);
 			if (v)
 			{
 				realRemoved += 1;
 				_carriedWeight -= GetByEnum(item).MilkUnitWeight;
             }
-			if (!removed && v) removed = true;
+
+            EmitSignal(SignalName.InventoryUpdated);
+
+            if (!removed && v) removed = true;
 		}
         $"Removed: {item} x {realRemoved}; Weight now: {_carriedWeight}".Test();
         return removed;
@@ -99,6 +101,18 @@ public partial class PlayerInventoryHandler : Node
 			items.Add((i.damage - f, i.item));
 		}
 		_carriedItems = items;
+	}
+
+	public void Clear()
+	{
+		var clonedItems = new List<(float damage, EnumItem item)>();
+
+		foreach (var item in _carriedItems) clonedItems.Add(item);
+
+		foreach (var item in clonedItems)
+		{
+            RemoveItemOfType(item.item);
+        }
 	}
 
 	public int GetWeight() => _carriedWeight;

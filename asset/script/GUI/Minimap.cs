@@ -326,6 +326,7 @@ public partial class Minimap : Control
 
 	public void SetFull(bool b) => _isFull = b;
 	public SubViewport GetView() => _view;
+	public Map GetMap() => _map;
 
 	public AnimatedSprite2D GetDestPoiIcon(Poi poi)
 	{

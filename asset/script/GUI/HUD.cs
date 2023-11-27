@@ -57,7 +57,7 @@ public partial class HUD : CanvasLayer
         _depotGui.SetMapPlayer(_player);
         _depotGui.SetMapMapScene(MapScene);
         _depotGui.SetMapGameManager(GameManager);
-	}
+    }
 
 	
 	public override void _Process(double delta)
@@ -142,4 +142,5 @@ public partial class HUD : CanvasLayer
     public bool GetInDepot() => _isInDepot;
 
     public Player GetPlayer() => _player;
+    public Label GetRequestsLabel() => _reqsLabel;
 }

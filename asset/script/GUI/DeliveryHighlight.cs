@@ -11,6 +11,7 @@ public partial class DeliveryHighlight : Control
 
 
 	private Label _label;
+	private Label _priorityLabel;
 	private TextureRect _icon;
 	private bool _isMouseOver;
 
@@ -18,12 +19,13 @@ public partial class DeliveryHighlight : Control
 	public override void _Ready()
 	{
 		_label = GetNode<Label>("text");
+		_priorityLabel = GetNode<Label>("priority");
 		_icon = GetNode<TextureRect>("icon");
 
 		_icon.Material = _icon.Material.Duplicate() as Material;
 
-		_icon.MouseEntered += () => _isMouseOver = true;
-		_icon.MouseExited += () => _isMouseOver = false;
+		MouseEntered += () => _isMouseOver = true;
+		MouseExited += () => _isMouseOver = false;
 	}
 
 	
@@ -32,7 +34,8 @@ public partial class DeliveryHighlight : Control
 		if (Request != null)
 		{
 			_label.Text = ConstructLabel();
-
+			_priorityLabel.Text = Request.Value.Priority.Name;
+			_priorityLabel.SelfModulate = new Color(Request.Value.Priority.Color);
 
 			if (_isMouseOver)
 			{

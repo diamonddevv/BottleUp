@@ -27,6 +27,21 @@ namespace BottleUp.asset.script.Game
 
         public static Item GetByEnum(EnumItem item) => Items[(int)item];
         public static EnumItem RandomItem(Random random) => (EnumItem)random.Next(11);
+        public static EnumItem RandomItem(Random random, List<EnumItem> not)
+        {
+            EnumItem? item = null;
+
+            while (!item.HasValue)
+            {
+                item = RandomItem(random);
+                if (not.Contains(item.Value))
+                {
+                    item = null;
+                }
+            }
+
+            return item.Value;
+        }
 
         public struct Item
         {

@@ -35,6 +35,7 @@ public partial class Poi : StaticBody2D
 
     private float _sqrDistToPlayer;
 	private StackedSprite _sprite;
+	private GpuParticles2D _deliveryParticles;
 	private Node2D _entrance;
 	private Map _map;
     private Player _player;
@@ -45,6 +46,7 @@ public partial class Poi : StaticBody2D
 	{
 		_sprite = GetNode<StackedSprite>("sprite");
 		_entrance = GetNode<Node2D>("entrance");
+		_deliveryParticles = GetNode<GpuParticles2D>("deliveryParticles");
 		_map = GetNode<Map>(Map);
     }
 
@@ -100,7 +102,9 @@ public partial class Poi : StaticBody2D
                 var v = _delivery.Value;
                 // Deliver Item
                 EmitSignal(SignalName.PoiDeliveryMade);
+                _deliveryParticles.Emitting = true;
                 v.Made = true;
+                _delivery = null;
             }
 			
         }

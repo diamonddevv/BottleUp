@@ -39,5 +39,18 @@ namespace BottleUp.asset.script.Util
         public static bool IsOfPercentageThreshold(float value, float max, float percentage) => value / max >= percentage;
 
         public static T RandomElement<T>(this Random random, List<T> list) => list[random.Next(list.Count)];
+        public static T RandomElement<T>(this Random random, List<T> list, Func<T, uint> GetWeight)
+        {
+            var l = new List<T>();
+            foreach (var element in list)
+            {
+                uint weight = GetWeight(element);
+                for (int i = 0; i < weight; i++)
+                {
+                    l.Add(element);
+                }
+            }
+            return RandomElement(random, l);
+        }
     }
 }

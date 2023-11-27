@@ -19,6 +19,12 @@ namespace BottleUp.asset.script.Util
             return t;
         }
 
+        public static T Test<T, V>(this T t, Func<T, V> what)
+        {
+            GD.Print(what(t));
+            return t;
+        }
+
         public static string FormatTime(double secs)
         {
             double mins = Math.Floor(secs / 60);

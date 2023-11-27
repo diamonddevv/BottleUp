@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://dyvoluah2k06x"]
+[gd_scene load_steps=8 format=3 uid="uid://dyvoluah2k06x"]
 
 [ext_resource type="Script" path="res://asset/script/Map/Poi.cs" id="1_ql78g"]
 [ext_resource type="Texture2D" uid="uid://6i4jcpiuq3gi" path="res://asset/texture/house_base.png" id="2_wjcbk"]
 [ext_resource type="Script" path="res://asset/script/Tool/StackedSprite.cs" id="3_5t7bw"]
 [ext_resource type="Texture2D" uid="uid://4s1vcmx57ej7" path="res://asset/texture/depot.png" id="4_qe5vs"]
+[ext_resource type="Texture2D" uid="uid://cfn8umcc76arp" path="res://asset/texture/particle/star.png" id="5_jdmks"]
+[ext_resource type="Material" uid="uid://cibg7lfab15vy" path="res://asset/particle/DeliveryMade.tres" id="5_pwfr4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6vdcn"]
 size = Vector2(32, 44)
@@ -29,3 +31,12 @@ shape = SubResource("RectangleShape2D_6vdcn")
 
 [node name="entrance" type="Node2D" parent="."]
 position = Vector2(0, 9)
+
+[node name="deliveryParticles" type="GPUParticles2D" parent="."]
+position = Vector2(0, -8)
+emitting = false
+amount = 20
+process_material = ExtResource("5_pwfr4")
+texture = ExtResource("5_jdmks")
+one_shot = true
+explosiveness = 1.0

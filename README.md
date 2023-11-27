@@ -13,6 +13,10 @@ _"Do you know how ironic this is? I can't even drink milk, I'm dairy intolerant"
 - [DiamondDev](https://www.github.com/diamonddevv) - Programming, Art, Game Design, Sound Design
 - [Nova_Quinn](https://www.instagram.com/novaquinn1010/) - Original Idea, Game Design, Moral Support
 
+
+## Unorignal Asset Credits
+- BBC: SFX (asset/audio/horn.wav)
+
 ## License
 This game and its original assets are all licensed under [CC-BY-NC-4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.en). All assets are original unless otherwise stated.
 

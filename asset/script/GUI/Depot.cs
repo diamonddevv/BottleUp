@@ -15,7 +15,9 @@ public partial class Depot : CanvasLayer
 	private Minimap _map;
 	private ColorRect _mapFullOverlay;
 	private Button _leaveButton;
+	private Button _dumpButton;
 	private Label _scaleWeightLabel;
+	private Label _reqs;
 	private VBoxContainer _items;
 	private VBoxContainer _deliveries;
 
@@ -31,9 +33,11 @@ public partial class Depot : CanvasLayer
 		_map = GetNode<Minimap>("minimap");
 		_mapFullOverlay = GetNode<ColorRect>("mapFullOverlay");
 		_leaveButton = GetNode<Button>("leaveButton");
+		_dumpButton = GetNode<Button>("dumpButton");
 		_items = GetNode<VBoxContainer>("items");
 		_deliveries = GetNode<VBoxContainer>("deliveries");
         _scaleWeightLabel = GetNode<Label>("scale/weight/numeral");
+        _reqs = GetNode<Label>("reqs");
 
         _leaveButton.Pressed += () =>
 		{
@@ -48,6 +52,11 @@ public partial class Depot : CanvasLayer
 			Hud.SetInDepot(false);
 		};
 
+		_dumpButton.Pressed += () =>
+		{
+			Hud.GetPlayer().GetInventory().Clear();
+		};
+
 		_map.MapFullClicked += (state) =>
 		{
 			_isMapFull = state;
@@ -58,6 +67,7 @@ public partial class Depot : CanvasLayer
 
 				_mapFullOverlay.Visible = true;
 				_deliveries.Visible = true;
+				_reqs.Visible = true;
 
 				Hud.GameManager.ActiveRequestsUpdated += () =>
 				{
@@ -86,6 +96,7 @@ public partial class Depot : CanvasLayer
 
                 _mapFullOverlay.Visible = false;
                 _deliveries.Visible = false;
+                _reqs.Visible = false;
 
                 foreach (var hbox in _items.GetChildren())
                 {
@@ -216,7 +227,8 @@ public partial class Depot : CanvasLayer
 	public override void _Process(double delta)
 	{
 		if (_scaleWeightLabel != null) _scaleWeightLabel.Text = $"+{_weightAdded}";
-	}
+		if (_reqs != null) _reqs.Text = Hud.GetRequestsLabel().Text;
+    }
 
 	public void SetMapPlayer(Player p) => _map.SetPlayer(p);
 	public void SetMapMapScene(PackedScene p) => _map.SetMapScene(p);

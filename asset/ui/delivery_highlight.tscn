@@ -65,6 +65,18 @@ theme = ExtResource("1_pj4iv")
 label_settings = ExtResource("1_4mse6")
 vertical_alignment = 1
 
+[node name="priority" type="Label" parent="."]
+layout_mode = 0
+offset_left = -15.0
+offset_top = 36.0
+offset_right = 135.0
+offset_bottom = 93.0
+scale = Vector2(0.5, 0.5)
+theme = ExtResource("1_pj4iv")
+label_settings = ExtResource("1_4mse6")
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="icon" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_8kwsn")
 layout_mode = 0
