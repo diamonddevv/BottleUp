@@ -49,8 +49,8 @@ shader_parameter/speed = 0.02
 shader_parameter/direction = Vector2(3, 8)
 shader_parameter/zoom = Vector2(0.25, 0.25)
 shader_parameter/contrast = 1.0
-shader_parameter/brightness = 0.0
-shader_parameter/final_brightness = 0.1
+shader_parameter/brightness = 0.2
+shader_parameter/final_brightness = 0.4
 shader_parameter/noiseR = SubResource("NoiseTexture2D_tww6c")
 shader_parameter/noiseG = SubResource("NoiseTexture2D_80sec")
 shader_parameter/noiseB = SubResource("NoiseTexture2D_omcqb")
@@ -193,6 +193,8 @@ position = Vector2(-1010, -20)
 texture = SubResource("AtlasTexture_1b5hi")
 
 [node name="clickToFullLabel" type="Label" parent="."]
+visible = false
+layout_mode = 0
 offset_left = -94.0
 offset_top = 141.0
 offset_right = 94.0

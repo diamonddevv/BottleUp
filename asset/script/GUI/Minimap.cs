@@ -69,7 +69,7 @@ public partial class Minimap : Control
 	private bool _clickTick;
 	private bool _lastClickTick;
 
-	public override void _Ready()
+    public override void _Ready()
 	{
 		_container = GetNode<SubViewportContainer>("container");
         _frame = GetNode<TextureRect>("container/frame");
@@ -103,7 +103,6 @@ public partial class Minimap : Control
 		_navArrow.Position = _frame.Position + _frame.Size.Multiply(0, .82f);
 
 		_navArrow.Scale = BottleUpMath.Uniform(3);
-
 
 		MouseEntered += () => _isMouseOver = true;
 		MouseExited += () => _isMouseOver = false;
@@ -296,6 +295,7 @@ public partial class Minimap : Control
             t.icon.ZIndex = 10;
             t.icon.Scale *= 3.5f;
             t.icon.TextureFilter = TextureFilterEnum.Nearest;
+			t.icon.Material = t.icon.Material.Duplicate() as Material;
 			t.icon.Show();
         }
     }

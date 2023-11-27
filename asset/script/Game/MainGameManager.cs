@@ -9,6 +9,10 @@ using static BottleUp.asset.script.Util.BottleUpHelper;
 
 public partial class MainGameManager : Node
 {
+    [Signal]
+    public delegate void ActiveRequestsUpdatedEventHandler();
+
+
 	[ExportCategory("Components")]
 	[Export] public Timer GameTimer;
 	[Export] public Map Map;
@@ -22,6 +26,8 @@ public partial class MainGameManager : Node
     private Random random;
 	private bool _started = false;
     private Dictionary<Poi, DeliveryRequest> _activeRequests = new Dictionary<Poi, DeliveryRequest>();
+
+    public void MarkRequestUpdate() => EmitSignal(SignalName.ActiveRequestsUpdated);
 
     public override void _Ready()
     {
@@ -55,6 +61,7 @@ public partial class MainGameManager : Node
                     DeliveryRequest req = DeliveryRequest.WithRandomFields(random, GameTimer, 3);
 
                     _activeRequests.Add(dest, req);
+                    MarkRequestUpdate();
                     dest.SetDelivery(req);
                 }
             }
@@ -164,14 +171,25 @@ public partial class MainGameManager : Node
             var req = new DeliveryRequest();
 
             int items = maxItems > 1 ? random.Next(maxItems) + 1 : 1;
+            int currentWeight = 0;
             req.Items = new List<CountedItem>();
+
+
             for (int i = 0; i < items; i++)
             {
                 var item = new CountedItem();
                 item.item = RandomItem(random);
                 item.count = random.Next(GetByEnum(item.item).MaxDeliverable) + 1;
                 item.intactness = 1;
-                req.Items.Add(item);
+
+                if (!(currentWeight + (item.count * GetByEnum(item.item).MilkUnitWeight) > PlayerInventoryHandler.MaxMilkUnitsCarriable))
+                {
+                    currentWeight += item.count * GetByEnum(item.item).MilkUnitWeight;
+                    req.Items.Add(item);
+                } else
+                {
+                    if (i < 2) i -= 1;
+                }
             }
 
             req.Priority = random.RandomElement(PrioritySpeed.PRIORITY_SPEEDS);

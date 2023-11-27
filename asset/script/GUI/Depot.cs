@@ -3,6 +3,7 @@ using BottleUp.asset.script.Util;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Text.Json;
 
 public partial class Depot : CanvasLayer
@@ -58,7 +59,15 @@ public partial class Depot : CanvasLayer
 				_mapFullOverlay.Visible = true;
 				_deliveries.Visible = true;
 
-				BuildDeliveries(Hud.GameManager);
+				Hud.GameManager.ActiveRequestsUpdated += () =>
+				{
+					if (_isMapFull)
+					{
+						BuildDeliveries(Hud.GameManager);
+					}
+				};
+
+				BuildDeliveries(Hud.GameManager, false);
 
 				foreach (var hbox in _items.GetChildren())
 				{
@@ -146,14 +155,32 @@ public partial class Depot : CanvasLayer
 
 		}
 
-	}
 
-    private void BuildDeliveries(MainGameManager manager)
+    }
+
+	private void BuildDeliveries(MainGameManager manager, bool update = true)
     {
-		foreach (var child in _deliveries.GetChildren()) child.QueueFree();
+		if (!update) foreach (var child in _deliveries.GetChildren()) child.QueueFree();
 
 		foreach (var delivery in manager.GetActiveRequests())
 		{
+			if (update)
+			{
+				bool skip = false;
+				foreach (var child in _deliveries.GetChildren())
+				{
+					if (child is DeliveryHighlight h)
+					{
+						if (h.Request.Value.Equals(delivery.Value))
+						{
+							skip = true;
+							break;
+						}
+					}
+				}
+				if (skip) continue;
+			}
+
 			DeliveryHighlight highlight = ResourceLoader.Load<PackedScene>("res://asset/ui/delivery_highlight.tscn").Instantiate<DeliveryHighlight>();
 
 

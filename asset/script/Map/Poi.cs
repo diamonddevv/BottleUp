@@ -10,6 +10,7 @@ public partial class Poi : StaticBody2D
 {
 	private PoiType _poiType = PoiType.Destination;
 
+
     [Export] public PoiType PointOfInterestType 
 	{
 		get => _poiType;
