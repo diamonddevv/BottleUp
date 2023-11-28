@@ -46,6 +46,8 @@ public partial class Player : CharacterBody2D
 	private StackedSprite _sprite;
 	private Area2D _grassCollider;
 	private PlayerInventoryHandler _inventory;
+	private AudioStreamPlayer2D _engineStreamPlayer;
+	private AudioStreamPlayer2D _hornStreamPlayer;
 
 	private float _turnMultiplier;
 	private float _speed;
@@ -79,6 +81,8 @@ public partial class Player : CharacterBody2D
 		_sprite = GetNode<StackedSprite>("sprite");
 		_grassCollider = GetNode<Area2D>("grassCollider");
 		_inventory = GetNode<PlayerInventoryHandler>("inventoryHandler");
+		_engineStreamPlayer = GetNode<AudioStreamPlayer2D>("engine");
+		_hornStreamPlayer = GetNode<AudioStreamPlayer2D>("horn");
 
 		_maxCameraSlideVec = BottleUpMath.Uniform(CameraSlide);
 
@@ -109,6 +113,11 @@ public partial class Player : CharacterBody2D
 			}
 		};
 
+		Hud.GameManager.DeliveryMade += () =>
+		{
+			HonkHorn(GD.Randf());
+		};
+
         _interactables = new Dictionary<Poi, bool>();
         _completedDeliveries = new List<DeliveryRequest>();
 	}
@@ -124,8 +133,11 @@ public partial class Player : CharacterBody2D
 		ControlTick();
 		ApplyMovement(delta);
 
-		_cameraSlide = Position + (BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * BottleUpMath.Lerp(0, CameraSlide, _speed / MaxSpeed));
-		if (!_isFullMap) Camera.Position = _cameraSlide;
+        EngineSoundTick();
+
+        _cameraSlide = Position + (BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * BottleUpMath.Lerp(0, CameraSlide, _speed / MaxSpeed));
+
+        if (!_isFullMap) Camera.Position = _cameraSlide;
 		else Camera.Position = _fullMapTargetPos;
 
 		if (_fullmapInputTick && !_lastFullmapInputTick)
@@ -151,10 +163,12 @@ public partial class Player : CharacterBody2D
 				_mapTransitionState = false;
 			}
 		}
-
+        
     }
 
-	public void ControlTick()
+    private Vector2 CalculateReturnPos() => GetWindow().GetVisibleRect().Size.Multiply(1, 0).Add(-250 / 2, 250 / 2) - new Vector2(20, -20);
+
+    public void ControlTick()
 	{
 		_lastAccelInputTick = _accelInputTick;
 		_lastTurnInputTick = _turnInputTick;
@@ -264,10 +278,26 @@ public partial class Player : CharacterBody2D
 
 
 	public void SetRating(Rating rating) => _rating = rating;
-	#endregion
+    #endregion
 
+    #region Audio Handlers
 
-	public void SetCanInteract(Poi poi, bool close)
+	public void EngineSoundTick()
+	{
+		if (!_engineStreamPlayer.Playing) _engineStreamPlayer.Play();
+
+		_engineStreamPlayer.PitchScale = .25f + (_speed / 25);
+	}
+	
+	public void HonkHorn(float pitchShift)
+	{
+        _hornStreamPlayer.PitchScale = 1 + pitchShift;
+        _hornStreamPlayer.Play();
+    }
+
+    #endregion
+
+    public void SetCanInteract(Poi poi, bool close)
 	{
 		if (_interactables.ContainsKey(poi))
 		{

@@ -2,6 +2,7 @@ using BottleUp.asset.script.Util;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static BottleUp.asset.script.Game.DeliverableItems;
 using static BottleUp.asset.script.Util.BottleUpHelper;
 
@@ -10,6 +11,8 @@ public partial class MainGameManager : Node
     [Signal]
     public delegate void ActiveRequestsUpdatedEventHandler();
 
+    [Signal]
+    public delegate void DeliveryMadeEventHandler();
 
 	[ExportCategory("Components")]
 	[Export] public Timer GameTimer;
@@ -37,8 +40,11 @@ public partial class MainGameManager : Node
             {
                 var v = poi.GetDelivery();
                 Player.GetCompletedDeliveries().Add(v.Value);
+                EmitSignal(SignalName.DeliveryMade);
             }
         };
+
+        Map.GameManager = this;
 
 		Start();
 	}
@@ -198,6 +204,21 @@ public partial class MainGameManager : Node
             req.Made = false;
 
             return req;
+        }
+
+        public void SetIntactness(PlayerInventoryHandler inventoryHandler)
+        {
+            foreach (var item in inventoryHandler.GetCarriedItemsWithCount())
+            {
+                if (!Items.Any(i => i.item == item.Key.item)) continue;
+
+                CountedItem i = Items.First(e => e.item == item.Key.item);
+                int index = Items.IndexOf(i);
+                var temp = Items[index];
+                temp.intactness = item.Key.damage;
+                Items[index] = temp;
+            }
+            
         }
     }
 

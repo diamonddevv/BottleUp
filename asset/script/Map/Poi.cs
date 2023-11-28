@@ -10,6 +10,7 @@ public partial class Poi : StaticBody2D
 {
 	private PoiType _poiType = PoiType.Destination;
 
+    public MainGameManager GameManager { get; set; }
 
     [Export] public PoiType PointOfInterestType 
 	{
@@ -71,11 +72,13 @@ public partial class Poi : StaticBody2D
         if (float.IsNaN(_sqrDistToPlayer)) return false;
         if (_sqrDistToPlayer <= _player.SquareArbMeterInteractDistanceThreshold / BottleUpMath.SQUARED_PIXELS_TO_ARB_METERS)
         {
-            if (PointOfInterestType == PoiType.Depot || _delivery != null) _player.SetCanInteract(this, true);
+            if ((PointOfInterestType == PoiType.Depot || _delivery != null) && IsDeliveryPossibleWithInventoryContents(_player.GetInventory())) 
+                _player.SetCanInteract(this, true);
 
             if (_player.GetIsInteracting())
             {
-				return true;
+                bool destReqMet = PointOfInterestType == PoiType.Depot ? true : IsDeliveryPossibleWithInventoryContents(_player.GetInventory());
+				if (destReqMet) return true;
             }
 
             return false;
@@ -83,6 +86,59 @@ public partial class Poi : StaticBody2D
         _player.SetCanInteract(this, false);
 
         return false;
+    }
+
+    public bool IsDeliveryPossibleWithInventoryContents(PlayerInventoryHandler inventory)
+    {
+        if (_delivery.HasValue)
+        {
+            var v = _delivery.Value;
+            int matches = v.Items.Count;
+            foreach (var item in v.Items)
+            {
+                int count = item.count;
+                EnumItem enumItem = item.item;
+                foreach (var invItem in inventory.GetCarriedItemsWithCount())
+                {
+                    if (invItem.Key.item == enumItem)
+                    {
+                        if (invItem.Value <= count)
+                        {
+                            matches -= 1;
+
+                            if (matches <= 0)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void SubtractRequestItems(PlayerInventoryHandler inventory)
+    {
+        if (_delivery.HasValue)
+        {
+            var v = _delivery.Value;
+            foreach (var item in v.Items)
+            {
+                int count = item.count;
+                EnumItem enumItem = item.item;
+                inventory.RemoveItemOfType(enumItem, count);
+            }
+        }
+    }
+
+    public void SetRequestItemIntactness(PlayerInventoryHandler inventory)
+    {
+        if (_delivery.HasValue)
+        {
+            _delivery.Value.SetIntactness(inventory);
+        }
     }
 
     public void DoDepotPoiProcess(double delta)
@@ -100,10 +156,18 @@ public partial class Poi : StaticBody2D
             if (_delivery.HasValue)
             {
                 var v = _delivery.Value;
-                // Deliver Item
+                // Deliver Item; Assume delivery is possible here
+
                 EmitSignal(SignalName.PoiDeliveryMade);
                 _deliveryParticles.Emitting = true;
+                SetRequestItemIntactness(_player.GetInventory());
                 v.Made = true;
+
+                SubtractRequestItems(_player.GetInventory());
+                GameManager.GetActiveRequests().Remove(this);
+                GameManager.MarkRequestUpdate();
+                CheckInteraction();
+
                 _delivery = null;
             }
 			

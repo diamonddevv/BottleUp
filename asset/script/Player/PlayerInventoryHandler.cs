@@ -116,4 +116,16 @@ public partial class PlayerInventoryHandler : Node
 	}
 
 	public int GetWeight() => _carriedWeight;
+
+	public float GetIntactness(EnumItem item)
+	{
+        foreach (var e in _carriedItems)
+        {
+            if (e.item == item)
+            {
+                return e.damage;
+            }
+        }
+		return -1;
+    }
 }

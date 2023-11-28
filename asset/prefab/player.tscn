@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bmsja7y4omkjr"]
+[gd_scene load_steps=8 format=3 uid="uid://bmsja7y4omkjr"]
 
 [ext_resource type="Script" path="res://asset/script/Player/Player.cs" id="1_108yg"]
 [ext_resource type="Texture2D" uid="uid://bf5hacoaaps43" path="res://asset/texture/van_slices.png" id="2_eitmi"]
 [ext_resource type="Script" path="res://asset/script/Tool/StackedSprite.cs" id="3_8upxq"]
 [ext_resource type="Script" path="res://asset/script/Player/PlayerInventoryHandler.cs" id="4_tdwjh"]
+[ext_resource type="AudioStream" uid="uid://c70ohvvu1uxta" path="res://asset/audio/horn.wav" id="6_mptnx"]
+[ext_resource type="AudioStream" uid="uid://ddv6d3tx6qk2n" path="res://asset/audio/engine.wav" id="7_fsfox"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7vtbi"]
 size = Vector2(10, 21)
@@ -20,7 +22,7 @@ texture = ExtResource("2_eitmi")
 hframes = 8
 region_enabled = true
 script = ExtResource("3_8upxq")
-DisplayRotation = 93.1
+DisplayRotation = 90.0
 
 [node name="shape" type="CollisionShape2D" parent="."]
 visible = false
@@ -39,3 +41,11 @@ shape = SubResource("RectangleShape2D_7vtbi")
 
 [node name="inventoryHandler" type="Node" parent="."]
 script = ExtResource("4_tdwjh")
+
+[node name="engine" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(-1, 0)
+stream = ExtResource("7_fsfox")
+
+[node name="horn" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(-1, 0)
+stream = ExtResource("6_mptnx")

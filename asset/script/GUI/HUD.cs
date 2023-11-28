@@ -142,5 +142,6 @@ public partial class HUD : CanvasLayer
     public bool GetInDepot() => _isInDepot;
 
     public Player GetPlayer() => _player;
-    public Label GetRequestsLabel() => _reqsLabel;
+	public Label GetRequestsLabel() => _reqsLabel;
+	public Minimap GetMinimap() => _minimap;
 }

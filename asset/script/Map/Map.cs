@@ -6,6 +6,8 @@ using System.Threading;
 
 public partial class Map : TileMap
 {
+	private MainGameManager _mainGameManager;
+
 	[Export] public NodePath Player { get; set; }
 
     [Signal]
@@ -14,6 +16,22 @@ public partial class Map : TileMap
     [Signal]
     public delegate void DepotInteractedEventHandler(Poi depot);
 
+
+	public MainGameManager GameManager
+	{
+		get => _mainGameManager;
+		set
+		{
+			_mainGameManager = value;
+			foreach (var child in GetChildren())
+			{
+				if (child is Poi poi)
+				{
+					poi.GameManager = value;
+				}
+			}
+		}
+	}
 
     private Player _player;
 	private List<Poi> _destinations;
