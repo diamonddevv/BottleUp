@@ -48,6 +48,7 @@ public partial class Player : CharacterBody2D
 	private PlayerInventoryHandler _inventory;
 	private AudioStreamPlayer2D _engineStreamPlayer;
 	private AudioStreamPlayer2D _hornStreamPlayer;
+	private AudioStreamPlayer2D _handbrakeStreamPlayer;
 
 	private float _turnMultiplier;
 	private float _speed;
@@ -83,6 +84,7 @@ public partial class Player : CharacterBody2D
 		_inventory = GetNode<PlayerInventoryHandler>("inventoryHandler");
 		_engineStreamPlayer = GetNode<AudioStreamPlayer2D>("engine");
 		_hornStreamPlayer = GetNode<AudioStreamPlayer2D>("horn");
+		_handbrakeStreamPlayer = GetNode<AudioStreamPlayer2D>("handbrake");
 
 		_maxCameraSlideVec = BottleUpMath.Uniform(CameraSlide);
 
@@ -134,6 +136,7 @@ public partial class Player : CharacterBody2D
 		ApplyMovement(delta);
 
         EngineSoundTick();
+        // HandbrakeSoundTick(_handbrakeInputTick, _turnInputTick); // doesnt sound right. future me problem
 
         _cameraSlide = Position + (BottleUpMath.DegToVec(RotationDegrees + ForwardDegreeOffset) * BottleUpMath.Lerp(0, CameraSlide, _speed / MaxSpeed));
 
@@ -278,9 +281,9 @@ public partial class Player : CharacterBody2D
 
 
 	public void SetRating(Rating rating) => _rating = rating;
-    #endregion
+	#endregion
 
-    #region Audio Handlers
+	#region Audio Handlers
 
 	public void EngineSoundTick()
 	{
@@ -288,11 +291,18 @@ public partial class Player : CharacterBody2D
 
 		_engineStreamPlayer.PitchScale = .25f + (_speed / 25);
 	}
-	
+
 	public void HonkHorn(float pitchShift)
 	{
         _hornStreamPlayer.PitchScale = 1 + pitchShift;
         _hornStreamPlayer.Play();
+    }
+
+    public void HandbrakeSoundTick(bool handbraking, float turnInput)
+    {
+		if (_speed > 0) _handbrakeStreamPlayer.PitchScale = _speed / 5f;
+		_handbrakeStreamPlayer.Playing = handbraking;
+		if (_speed <= 10) _handbrakeStreamPlayer.Stop();
     }
 
     #endregion

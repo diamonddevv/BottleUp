@@ -1,6 +1,21 @@
-[gd_scene load_steps=2 format=3 uid="uid://b4ayjlctqrvyb"]
+[gd_scene load_steps=5 format=3 uid="uid://b4ayjlctqrvyb"]
+
+[ext_resource type="Shader" path="res://asset/shader/FinishBackground.gdshader" id="1_puvvp"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_djqqb"]
+noise_type = 3
+seed = -1460238932
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_87ayt"]
+seamless = true
+seamless_blend_skirt = 1.0
+noise = SubResource("FastNoiseLite_djqqb")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_70wt6"]
+shader = ExtResource("1_puvvp")
+shader_parameter/speed = 0.03
+shader_parameter/direction = Vector2(3, 7)
+shader_parameter/noisemap = SubResource("NoiseTexture2D_87ayt")
 
 [node name="finishedGame" type="CanvasLayer"]
 
