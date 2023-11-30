@@ -11,7 +11,8 @@ config_version=5
 [application]
 
 config/name="Bottle Up!"
-run/main_scene="res://scene/main.tscn"
+config/description="A game about delivering milk to ungrateful customers at very high speeds"
+run/main_scene="res://scene/mainMenu.tscn"
 config/features=PackedStringArray("4.1", "C#", "GL Compatibility")
 run/max_fps=60
 boot_splash/image="res://asset/texture/ui/splash.png"

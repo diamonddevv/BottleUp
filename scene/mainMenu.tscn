@@ -1,0 +1,160 @@
+[gd_scene load_steps=12 format=3 uid="uid://ceguhfp5mqhub"]
+
+[ext_resource type="Script" path="res://asset/script/GUI/MainMenu.cs" id="1_dptdu"]
+[ext_resource type="Shader" path="res://asset/shader/FinishBackground.gdshader" id="2_mqhny"]
+[ext_resource type="Theme" uid="uid://y255ykpkjam0" path="res://asset/font/PixellariFontTheme.tres" id="3_003v3"]
+[ext_resource type="LabelSettings" uid="uid://swbyh6dnefyb" path="res://asset/font/PixellariLabelSettings.tres" id="4_ohhq2"]
+[ext_resource type="Texture2D" uid="uid://tg3vavqpn2vt" path="res://asset/texture/ui/title.png" id="4_tbuf3"]
+[ext_resource type="Texture2D" uid="uid://bpk31cb86mt0s" path="res://asset/texture/ui/ddv.png" id="5_bjn2r"]
+[ext_resource type="PackedScene" uid="uid://dsgluvgc54dht" path="res://asset/ui/rating_stars.tscn" id="5_c278r"]
+[ext_resource type="Texture2D" uid="uid://bhm8int73c2m7" path="res://asset/texture/ui/forg.png" id="5_hjof6"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wa46q"]
+noise_type = 3
+seed = -1460238932
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_87ayt"]
+generate_mipmaps = false
+seamless = true
+seamless_blend_skirt = 1.0
+noise = SubResource("FastNoiseLite_wa46q")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gqton"]
+shader = ExtResource("2_mqhny")
+shader_parameter/speed = 0.00369
+shader_parameter/XDirection = -2.73
+shader_parameter/YDirection = -7.12
+shader_parameter/noisemap = SubResource("NoiseTexture2D_87ayt")
+
+[node name="mainMenu" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_dptdu")
+
+[node name="background" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_gqton")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="title" type="TextureRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -346.0
+offset_top = -216.5
+offset_right = -250.0
+offset_bottom = -193.5
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(8, 8)
+theme = ExtResource("3_003v3")
+texture = ExtResource("4_tbuf3")
+stretch_mode = 5
+
+[node name="buttons" type="VBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 10.5
+offset_bottom = 79.5
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(2, 2)
+theme = ExtResource("3_003v3")
+
+[node name="play" type="Button" parent="buttons"]
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+text = "Start"
+
+[node name="close" type="Button" parent="buttons"]
+custom_minimum_size = Vector2(75, 25)
+layout_mode = 2
+text = "Close"
+
+[node name="forg" type="TextureButton" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -293.0
+offset_top = -68.9999
+offset_right = 347.0
+offset_bottom = 571.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.1, 0.1)
+texture_normal = ExtResource("5_hjof6")
+
+[node name="ddv" type="TextureRect" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -237.0
+offset_top = -70.0001
+offset_right = 403.0
+offset_bottom = 570.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("5_bjn2r")
+
+[node name="copyright" type="Label" parent="ddv"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -90.001
+offset_top = 20.0
+offset_right = 72.999
+offset_bottom = 43.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(10, 10)
+theme = ExtResource("3_003v3")
+text = "(C) DiamondDev, 2023-"
+label_settings = ExtResource("4_ohhq2")
+
+[node name="best" parent="." instance=ExtResource("5_c278r")]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -107.0
+offset_right = -150.0
+offset_bottom = -107.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(1.5, 1.5)
+Percentage = 0.0
+
+[node name="label" type="Label" parent="best"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 58.0
+offset_top = -20.6667
+offset_right = 142.0
+offset_bottom = 2.33331
+grow_horizontal = 2
+theme = ExtResource("3_003v3")
+text = "Best Rating:"
+label_settings = ExtResource("4_ohhq2")
+horizontal_alignment = 1
+vertical_alignment = 1

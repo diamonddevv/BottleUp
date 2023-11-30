@@ -23,6 +23,9 @@ public partial class MainGameManager : Node
 	[Export] public double GameSeconds;
     [Export] public int MaxRequests = 10;
 
+    [ExportCategory("Miscellaneous")]
+    [Export] public PackedScene FinishScreen;
+
 
     private Random random;
 	private bool _started = false;
@@ -96,6 +99,11 @@ public partial class MainGameManager : Node
         });
 
         // change to finish screen
+        Finish finish = FinishScreen.Instantiate<Finish>();
+        finish.StarsPercentage = Mathf.RoundToInt(Player.GetRating().Percentage * 100);
+
+        GetTree().Root.GetChild(0).QueueFree();
+        GetTree().Root.AddChild(finish);
     }
 
     public struct DeliveryRequest
@@ -192,6 +200,11 @@ public partial class MainGameManager : Node
                     currentWeight += item.count * GetByEnum(item.item).MilkUnitWeight;
                     alreadyPresentItems.Add(item.item); 
                     req.Items.Add(item);
+
+                    if (item.item == EnumItem.Cow)
+                    {
+                        break;
+                    }
                 } else
                 {
                     if (i < 2) i -= 1;

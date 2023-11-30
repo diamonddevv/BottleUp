@@ -1,23 +1,31 @@
-[gd_scene load_steps=5 format=3 uid="uid://b4ayjlctqrvyb"]
+[gd_scene load_steps=9 format=3 uid="uid://b4ayjlctqrvyb"]
 
+[ext_resource type="Script" path="res://asset/script/GUI/Finish.cs" id="1_oioko"]
 [ext_resource type="Shader" path="res://asset/shader/FinishBackground.gdshader" id="1_puvvp"]
+[ext_resource type="PackedScene" uid="uid://dsgluvgc54dht" path="res://asset/ui/rating_stars.tscn" id="2_v4ncs"]
+[ext_resource type="Theme" uid="uid://y255ykpkjam0" path="res://asset/font/PixellariFontTheme.tres" id="3_4qc8l"]
+[ext_resource type="LabelSettings" uid="uid://swbyh6dnefyb" path="res://asset/font/PixellariLabelSettings.tres" id="4_d5gux"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_djqqb"]
 noise_type = 3
 seed = -1460238932
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_87ayt"]
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_lr3bb"]
+generate_mipmaps = false
 seamless = true
 seamless_blend_skirt = 1.0
 noise = SubResource("FastNoiseLite_djqqb")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_70wt6"]
 shader = ExtResource("1_puvvp")
-shader_parameter/speed = 0.03
-shader_parameter/direction = Vector2(3, 7)
-shader_parameter/noisemap = SubResource("NoiseTexture2D_87ayt")
+shader_parameter/speed = 0.00369
+shader_parameter/XDirection = -2.73
+shader_parameter/YDirection = -7.12
+shader_parameter/noisemap = SubResource("NoiseTexture2D_lr3bb")
 
 [node name="finishedGame" type="CanvasLayer"]
+script = ExtResource("1_oioko")
+metadata/_edit_horizontal_guides_ = [67.0]
 
 [node name="background" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_70wt6")
@@ -27,3 +35,57 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
+
+[node name="title" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -213.0
+offset_top = 77.0
+offset_right = -135.0
+offset_bottom = 100.0
+grow_horizontal = 2
+scale = Vector2(5, 5)
+theme = ExtResource("3_4qc8l")
+text = "Shift Over!"
+label_settings = ExtResource("4_d5gux")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="stars" parent="." instance=ExtResource("2_v4ncs")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -301.0
+offset_top = -117.0
+offset_right = -301.0
+offset_bottom = -117.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(3, 3)
+Percentage = 0.0
+
+[node name="buttons" type="HBoxContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -163.0
+offset_top = -238.0
+offset_right = 33.0
+offset_bottom = -198.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(2, 2)
+theme = ExtResource("3_4qc8l")
+
+[node name="toMain" type="Button" parent="buttons"]
+layout_mode = 2
+text = "Main Menu"
+
+[node name="again" type="Button" parent="buttons"]
+layout_mode = 2
+text = "Play Again"

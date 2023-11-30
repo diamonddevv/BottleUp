@@ -36,7 +36,8 @@ public partial class Pause : CanvasLayer
 
 		_mainMenu.Pressed += () =>
 		{
-
+			GetTree().Paused = false;
+            GetTree().ChangeSceneToFile("res://scene/mainMenu.tscn");
 		};
 
 		_settings.Pressed += () =>

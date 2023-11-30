@@ -68,7 +68,7 @@ public partial class HUD : CanvasLayer
 		if (_player.GetInteraction(out var poi))
 		{
 			_interactLabel.Visible = true;
-			if (poi.PointOfInterestType == Poi.PoiType.Depot)
+            if (poi.PointOfInterestType == Poi.PoiType.Depot)
 			{
 				_interactLabel.Text = "Press 'E' to Enter Depot";
 			} else

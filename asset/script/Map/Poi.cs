@@ -90,6 +90,8 @@ public partial class Poi : StaticBody2D
 
     public bool IsDeliveryPossibleWithInventoryContents(PlayerInventoryHandler inventory)
     {
+        if (PointOfInterestType == PoiType.Depot) return true;
+
         if (_delivery.HasValue)
         {
             var v = _delivery.Value;

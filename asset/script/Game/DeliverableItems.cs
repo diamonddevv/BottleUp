@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using BottleUp.asset.script.Util;
+using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace BottleUp.asset.script.Game
         }
 
         public static Item GetByEnum(EnumItem item) => Items[(int)item];
-        public static EnumItem RandomItem(Random random) => (EnumItem)random.Next(11);
+        public static EnumItem RandomItem(Random random) => (EnumItem)random.Next(12);
         public static EnumItem RandomItem(Random random, List<EnumItem> not)
         {
             EnumItem? item = null;
