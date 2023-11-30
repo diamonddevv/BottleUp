@@ -11,7 +11,7 @@ script = ExtResource("1_dwsvn")
 GameTimer = NodePath("gameTimer")
 Map = NodePath("Map")
 Player = NodePath("player")
-GameSeconds = 600.0
+GameSeconds = 60.0
 FinishScreen = ExtResource("2_uta03")
 
 [node name="Map" parent="." instance=ExtResource("1_rsrif")]

@@ -89,18 +89,21 @@ public partial class MainGameManager : Node
 
         double avgRating = 0;
 
-        foreach (var v in Player.GetCompletedDeliveries()) avgRating += v.Average.Percentage;
+        foreach (var v in Player.GetCompletedDeliveries())
+        {
+            avgRating += v.Average.Percentage;
+        }
         avgRating /= Player.GetCompletedDeliveries().Count;
 
         Player.SetRating(new Rating()
         {
             StarCount = 5,
-            Percentage = avgRating
+            Percentage = avgRating.Test()
         });
 
         // change to finish screen
         Finish finish = FinishScreen.Instantiate<Finish>();
-        finish.StarsPercentage = Mathf.RoundToInt(Player.GetRating().Percentage * 100);
+        finish.StarsPercentage = (Player.GetRating().Percentage * 100 / ((Player.GetCompletedDeliveries().Count + 1) / 10)).Test();
 
         GetTree().Root.GetChild(0).QueueFree();
         GetTree().Root.AddChild(finish);
@@ -116,46 +119,33 @@ public partial class MainGameManager : Node
 
         public Rating Average;
         public Rating MilkIntactness;
-        public Rating Quantity;
         public Rating Speed;
 
-        public void SetRatings(float deliveryTime, List<CountedItem> delivered)
+        public void SetRatings(double deliveryTime)
         {
-            double speed = deliveryTime - DispatchTime;
+            double speed = DispatchTime - deliveryTime;
             float averageItemIntactness = 0;
-            float desiredCount = 0;
             float totalCount = 0;
 
-            foreach (var item in delivered)
+            foreach (var item in Items)
             {
                 averageItemIntactness += item.intactness;
                 totalCount += item.count;
             }
 
-            foreach (var item in Items)
-            {
-                desiredCount += item.count;
-            }
-
-            averageItemIntactness /= delivered.Count;
+            averageItemIntactness /= Items.Count;
 
 
             Speed = new Rating()
             {
                 StarCount = 5,
-                Percentage = Priority.Time / speed
+                Percentage = Mathf.Max(0, speed / Priority.Time)
             };
 
             MilkIntactness = new Rating()
             {
                 StarCount = 5,
                 Percentage = averageItemIntactness
-            };
-
-            Quantity = new Rating()
-            {
-                StarCount = 5,
-                Percentage = totalCount / desiredCount
             };
 
             CalculateAverage();
@@ -165,10 +155,9 @@ public partial class MainGameManager : Node
             double a = 0;
 
             a += MilkIntactness.Percentage;
-            a += Quantity.Percentage;
             a += Speed.Percentage;
 
-            a /= 3;
+            a /= 2;
 
             Average = new Rating()
             {

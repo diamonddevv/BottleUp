@@ -144,4 +144,5 @@ public partial class HUD : CanvasLayer
     public Player GetPlayer() => _player;
 	public Label GetRequestsLabel() => _reqsLabel;
 	public Minimap GetMinimap() => _minimap;
+	public Timer GetTimer() => _timer;
 }

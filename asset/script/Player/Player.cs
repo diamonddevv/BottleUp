@@ -235,7 +235,7 @@ public partial class Player : CharacterBody2D
 		{
 			if (BottleUpMath.IsOfPercentageThreshold(_speed, MaxSpeed, 0.75f))
 			{
-                GetInventory().Damage(0.05f * _speed / 4);
+                GetInventory().Damage(0.0005f * _speed / 4);
             }
 
 			_speed -= _speed / 100 * 1.5f;
@@ -266,7 +266,7 @@ public partial class Player : CharacterBody2D
 
 		if (collided)
 		{
-			GetInventory().Damage(0.05f * _speed / 2);
+			GetInventory().Damage(0.0005f * _speed / 2);
         }
 	}
 
@@ -278,8 +278,6 @@ public partial class Player : CharacterBody2D
 
 	public List<DeliveryRequest> GetCompletedDeliveries() => _completedDeliveries;
 	public Rating GetRating() => _rating;
-
-
 	public void SetRating(Rating rating) => _rating = rating;
 	#endregion
 

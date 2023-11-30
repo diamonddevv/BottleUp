@@ -12,7 +12,7 @@ namespace BottleUp.asset.script.Util
     {
         public struct SaveData
         {
-            public int BestRating;
+            public double BestRating;
         }
 
         public const string SAVE_LOCATION = "user://bottleup_save.dat";

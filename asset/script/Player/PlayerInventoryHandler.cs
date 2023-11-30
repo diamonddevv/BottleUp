@@ -98,7 +98,7 @@ public partial class PlayerInventoryHandler : Node
 		List<(float damage, EnumItem item)> items = new List<(float damage, EnumItem item)>();
 		foreach (var i in _carriedItems)
 		{
-			items.Add((i.damage - f, i.item));
+			items.Add((Mathf.Max(0, i.damage - f), i.item));;
 		}
 		_carriedItems = items;
 	}

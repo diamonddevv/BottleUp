@@ -163,6 +163,8 @@ public partial class Poi : StaticBody2D
                 EmitSignal(SignalName.PoiDeliveryMade);
                 _deliveryParticles.Emitting = true;
                 SetRequestItemIntactness(_player.GetInventory());
+
+                v.SetRatings(_player.Hud.GetTimer().TimeLeft);
                 v.Made = true;
 
                 SubtractRequestItems(_player.GetInventory());

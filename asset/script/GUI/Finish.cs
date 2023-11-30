@@ -4,10 +4,10 @@ using System;
 
 public partial class Finish : CanvasLayer
 {
-	private int _starsPercent;
+	private double _starsPercent;
 
 
-	public int StarsPercentage
+	public double StarsPercentage
 	{
 		get => _starsPercent; 
 		set
