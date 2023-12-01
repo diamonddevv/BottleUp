@@ -14,7 +14,7 @@ public partial class Finish : CanvasLayer
 		{
             _starsPercent = value;
 
-			SaveManager.saveData.BestRating = _starsPercent;
+			SaveManager.saveData.BestRating = Math.Max(SaveManager.saveData.BestRating, _starsPercent);
 			SaveManager.Save();
         }
 	}

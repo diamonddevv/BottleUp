@@ -11,7 +11,7 @@ _"Do you know how ironic this is? I can't even drink milk, I'm dairy intolerant"
 
 ## Credits
 - [DiamondDev](https://www.github.com/diamonddevv) - Programming, Art, Game Design, Sound Design
-- [Nova_Quinn](https://www.instagram.com/novaquinn1010/) - Original Idea, Game Design, Moral Support
+- [Nova_Quinn](https://www.instagram.com/novaquinn1010/) - Original Idea, Game Design, Moral Support, Beta Tester
 
 
 ## Unorignal Asset Credits

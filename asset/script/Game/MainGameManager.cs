@@ -2,6 +2,7 @@ using BottleUp.asset.script.Util;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using static BottleUp.asset.script.Game.DeliverableItems;
 using static BottleUp.asset.script.Util.BottleUpHelper;
@@ -39,11 +40,13 @@ public partial class MainGameManager : Node
 
         Map.DeliveryMade += (poi) =>
         {
-            if (poi.GetDelivery() != null)
+            if (_activeRequests.ContainsKey(poi))
             {
-                var v = poi.GetDelivery();
-                Player.GetCompletedDeliveries().Add(v.Value);
+                var v = _activeRequests[poi];
+                v.SetRatings(GameTimer.TimeLeft);
+                Player.GetCompletedDeliveries().Add(v);
                 EmitSignal(SignalName.DeliveryMade);
+                poi.SetDelivery(null);
             }
         };
 
@@ -60,7 +63,7 @@ public partial class MainGameManager : Node
             // Add Requests
             if (_activeRequests.Count < MaxRequests)
             {
-                if (random.Chance(1f/50f))
+                if (random.Chance(1f/50f * (GameSeconds - GameTimer.TimeLeft < 60 ? 100f : 1f)))
                 {
                     // Add a Request
                     var dest = random.RandomElement(Map.GetDestinations().FindAll((poi) => !_activeRequests.ContainsKey(poi))); // gives a random poi without a request already present
@@ -88,22 +91,38 @@ public partial class MainGameManager : Node
 		_started = false;
 
         double avgRating = 0;
+        double avgSpeedRating = 0;
+        double avgIntactness = 0;
 
         foreach (var v in Player.GetCompletedDeliveries())
         {
+            avgSpeedRating += v.Speed.Percentage;
+            avgIntactness += v.MilkIntactness.Percentage;
+
             avgRating += v.Average.Percentage;
         }
+
+
         avgRating /= Player.GetCompletedDeliveries().Count;
+        avgIntactness /= Player.GetCompletedDeliveries().Count;
+        avgSpeedRating /= Player.GetCompletedDeliveries().Count;
 
         Player.SetRating(new Rating()
         {
             StarCount = 5,
-            Percentage = avgRating.Test()
+            Percentage = avgRating
         });
 
         // change to finish screen
         Finish finish = FinishScreen.Instantiate<Finish>();
-        finish.StarsPercentage = (Player.GetRating().Percentage * 100 / ((Player.GetCompletedDeliveries().Count + 1) / 10)).Test();
+        finish.StarsPercentage = Player.GetRating().Percentage * 100 * Player.GetCompletedDeliveries().Count / 8;
+
+        if (double.IsNaN(finish.StarsPercentage)) finish.StarsPercentage = 0;
+
+        "\n".Test();
+        $"Avg. Intactness: {avgIntactness * 100}".Test();
+        $"Avg. Speed Rating: {avgSpeedRating * 100}".Test();
+        $"Score: {finish.StarsPercentage}".Test();
 
         GetTree().Root.GetChild(0).QueueFree();
         GetTree().Root.AddChild(finish);
@@ -139,13 +158,13 @@ public partial class MainGameManager : Node
             Speed = new Rating()
             {
                 StarCount = 5,
-                Percentage = Mathf.Max(0, speed / Priority.Time)
+                Percentage = Mathf.Max(0, (Priority.Time - speed) / Priority.Time)
             };
 
             MilkIntactness = new Rating()
             {
                 StarCount = 5,
-                Percentage = averageItemIntactness
+                Percentage =  averageItemIntactness
             };
 
             CalculateAverage();
@@ -222,6 +241,11 @@ public partial class MainGameManager : Node
             }
             
         }
+
+        public override string ToString()
+        {
+            return $"[{string.Join(",", Items)} - {Speed.Percentage},{MilkIntactness.Percentage},{Average.Percentage}]";
+        }
     }
 
     public Dictionary<Poi, DeliveryRequest> GetActiveRequests() => _activeRequests;
@@ -231,6 +255,11 @@ public partial class MainGameManager : Node
         public EnumItem item;
         public int count;
         public float intactness;
+
+        public override string ToString()
+        {
+            return $"[{item},{count},{intactness}]";
+        }
     }
     public struct PrioritySpeed
     {

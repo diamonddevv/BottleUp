@@ -125,7 +125,7 @@ public partial class Poi : StaticBody2D
     {
         if (_delivery.HasValue)
         {
-            var v = _delivery.Value;
+            var v = GameManager.GetActiveRequests()[this];
             foreach (var item in v.Items)
             {
                 int count = item.count;
@@ -160,7 +160,6 @@ public partial class Poi : StaticBody2D
                 var v = _delivery.Value;
                 // Deliver Item; Assume delivery is possible here
 
-                EmitSignal(SignalName.PoiDeliveryMade);
                 _deliveryParticles.Emitting = true;
                 SetRequestItemIntactness(_player.GetInventory());
 
@@ -168,8 +167,12 @@ public partial class Poi : StaticBody2D
                 v.Made = true;
 
                 SubtractRequestItems(_player.GetInventory());
+                EmitSignal(SignalName.PoiDeliveryMade);
                 GameManager.GetActiveRequests().Remove(this);
                 GameManager.MarkRequestUpdate();
+
+                
+
                 CheckInteraction();
 
                 _delivery = null;
